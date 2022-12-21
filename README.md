@@ -27,6 +27,8 @@ if (extractor) {
 }
 ```
 
+TODO: add a declaration file for the API
+
 ## Development
 
 While this plugin is first developped for Omnisearch, it's totally agnostic and I'd like it to become a community effort. If you wish to submit a PR, please open an issue first so we can discuss the feature.
