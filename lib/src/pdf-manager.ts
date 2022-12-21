@@ -45,9 +45,6 @@ class PDFWorker {
 
 class PDFManager {
   public async getPdfText(file: TFile): Promise<string> {
-    if (Platform.isMobile) {
-      return ''
-    }
     return processQueue(this._getPdfText, file)
   }
 
@@ -56,6 +53,10 @@ class PDFManager {
     const cache = await readCache(file)
     if (cache) {
       return cache.text
+    }
+
+    if (Platform.isMobile) {
+      return ''
     }
 
     // The PDF is not cached, extract it

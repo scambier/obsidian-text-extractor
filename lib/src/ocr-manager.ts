@@ -76,9 +76,6 @@ class OCRManager {
     file: TFile,
     options: OcrOptions = { langs: ['eng'] }
   ): Promise<string> {
-    if (Platform.isMobile) {
-      return ''
-    }
     return processQueue(this._getImageText, file, options)
   }
 
@@ -91,6 +88,10 @@ class OCRManager {
     const cache = await readCache(file, optLangs)
     if (cache) {
       return cache.text
+    }
+
+    if (Platform.isMobile) {
+      return ''
     }
     
     // The text is not cached, extract it
