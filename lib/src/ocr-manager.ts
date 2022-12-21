@@ -1,11 +1,8 @@
 import { Platform, TFile } from 'obsidian'
 import Tesseract, { createWorker } from 'tesseract.js'
-import { database } from './database'
-import { libVersion, processQueue } from './globals'
-import type { ocrLangs } from './ocr-langs'
-import { makeMD5 } from './utils'
-
-type OcrOptions = { langs: Array<typeof ocrLangs[number]> }
+import { getCachePath, readCache, writeCache } from './cache'
+import { processQueue } from './globals'
+import type { ExtractedText, OcrOptions } from './types'
 
 const workerTimeout = 120_000
 
@@ -89,28 +86,18 @@ class OCRManager {
     file: TFile,
     options: OcrOptions
   ): Promise<string> {
-    const langs = options.langs.join('+')
-    // 1) Check if we can find by path & size. This is the fastest way.
-    const docByPath = await database.images.get({
-      path: file.path,
-      size: file.stat.size,
-      langs,
-    })
-
-    if (docByPath) {
-      return docByPath.text
+    const optLangs = options.langs.sort().join('+')
+    // Get the text from the cache if it exists
+    const cache = await readCache(file, optLangs)
+    if (cache) {
+      return cache.text
     }
-
-    // 2) Check by hash
+    
+    // The text is not cached, extract it
+    const cachePath = getCachePath(file)
     const data = new Uint8ClampedArray(await app.vault.readBinary(file))
-    const hash = makeMD5(data)
-    const docByHash = await database.images.get({ hash, langs })
-    if (docByHash) {
-      return docByHash.text
-    }
-
-    // 3) The image is not cached, extract it
     const worker = OCRWorker.getWorker()
+
     return new Promise(async (resolve, reject) => {
       try {
         const res = await worker.run({
@@ -118,7 +105,6 @@ class OCRManager {
           name: file.basename,
           options,
         })
-        const langs = res.langs
         const text = res.text
           // Replace \n with spaces
           .replace(/\n/g, ' ')
@@ -127,33 +113,13 @@ class OCRManager {
           .trim()
 
         // Add it to the cache
-        database.images
-          .put({
-            hash,
-            text,
-            langs,
-            path: file.path,
-            size: file.stat.size,
-            libVersion,
-          })
-          .then(() => {
-            resolve(text)
-          })
+        await writeCache(cachePath.folder, cachePath.filename, text, optLangs)
+        resolve(text)
       } catch (e) {
         // In case of error (unreadable PDF or timeout) just add
         // an empty string to the cache
-        database.images
-          .add({
-            hash,
-            text: '',
-            langs: '',
-            path: file.path,
-            size: file.stat.size,
-            libVersion,
-          })
-          .then(() => {
-            resolve('')
-          })
+        await writeCache(cachePath.folder, cachePath.filename, '', optLangs)
+        resolve('')
       }
     })
   }

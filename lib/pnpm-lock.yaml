@@ -11,7 +11,6 @@ specifiers:
   '@types/pako': ^2.0.0
   babel-jest: ^27.5.1
   builtin-modules: ^3.3.0
-  dexie: ^3.2.2
   jest: ^27.5.1
   obsidian: latest
   p-limit: ^4.0.0
@@ -29,7 +28,6 @@ specifiers:
   typescript: ^4.8.4
 
 dependencies:
-  dexie: 3.2.2
   p-limit: 4.0.0
   pure-md5: 0.1.14
   tesseract.js: 3.0.3
@@ -1553,11 +1551,6 @@ packages:
     resolution: {integrity: sha512-TLz+x/vEXm/Y7P7wn1EJFNLxYpUD4TgMosxY6fAVJUnJMbupHBOncxyWUG9OpTaH9EBD7uFI5LfEgmMOc54DsA==}
     engines: {node: '>=8'}
     dev: true
-
-  /dexie/3.2.2:
-    resolution: {integrity: sha512-q5dC3HPmir2DERlX+toCBbHQXW5MsyrFqPFcovkH9N2S/UW/H3H5AWAB6iEOExeraAu+j+zRDG+zg/D7YhH0qg==}
-    engines: {node: '>=6.0'}
-    dev: false
 
   /diff-sequences/27.5.1:
     resolution: {integrity: sha512-k1gCAXAsNgLwEL+Y8Wvl+M6oEFj5bgazfZULpS5CneoPPXRaCCW7dm+q21Ky2VEE5X+VeRDBVg1Pcvvsr4TtNQ==}

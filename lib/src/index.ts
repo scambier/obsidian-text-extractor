@@ -1,17 +1,26 @@
 import { pdfManager } from './pdf-manager'
 import { ocrManager } from './ocr-manager'
 import { ocrLangs } from './ocr-langs'
+import type { TFile } from 'obsidian'
 
-/**
- * Returns the text of a PDF file. There is a 120s timeout for the extraction.
- * If the extraction fails, an empty string is returned.
- */
-const getPdfText = pdfManager.getPdfText.bind(pdfManager)
+const extractText = function (file: TFile): Promise<string> {
+  if (isFilePDF(file.path)) {
+    return pdfManager.getPdfText(file)
+  } else if (isFileImage(file.path)) {
+    return ocrManager.getImageText(file)
+  }
+  return Promise.resolve('')
+}
 
-/**
- * Returns the text of an image file. You can also specify the languages to use for OCR.
- */
-const getImageText = ocrManager.getImageText.bind(ocrManager)
+function isFilePDF(path: string): boolean {
+  return path.endsWith('.pdf')
+}
+
+function isFileImage(path: string): boolean {
+  return (
+    path.endsWith('.png') || path.endsWith('.jpg') || path.endsWith('.jpeg')
+  )
+}
 
 /**
  * Returns the list of supported languages for OCR
@@ -20,4 +29,4 @@ function getOcrLangs() {
   return ocrLangs
 }
 
-export { getPdfText, getImageText, getOcrLangs }
+export { extractText, getOcrLangs, isFilePDF, isFileImage }

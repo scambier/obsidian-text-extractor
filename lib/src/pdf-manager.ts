@@ -1,8 +1,8 @@
 import { Platform, TFile } from 'obsidian'
 import WebWorker from 'web-worker:./pdf-worker.ts'
 import { makeMD5 } from './utils'
-import { database } from './database'
-import { libVersion, processQueue } from './globals'
+import { processQueue } from './globals'
+import { getCachePath, readCache, writeCache } from './cache'
 
 const workerTimeout = 120_000
 
@@ -52,25 +52,17 @@ class PDFManager {
   }
 
   private async _getPdfText(file: TFile): Promise<string> {
-    // 1) Check if we can find by path & size
-    const docByPath = await database.pdf.get({
-      path: file.path,
-      size: file.stat.size,
-    })
-
-    if (docByPath) {
-      return docByPath.text
+    // Get the text from the cache if it exists
+    const cache = await readCache(file)
+    if (cache) {
+      return cache.text
     }
 
-    // 2) Check by hash
+    // The PDF is not cached, extract it
+    const cachePath = getCachePath(file)
     const data = new Uint8Array(await app.vault.readBinary(file))
     const hash = makeMD5(data)
-    const docByHash = await database.pdf.get(hash)
-    if (docByHash) {
-      return docByHash.text
-    }
 
-    // 3) The PDF is not cached, extract it
     const worker = PDFWorker.getWorker()
     return new Promise(async (resolve, reject) => {
       try {
@@ -83,42 +75,13 @@ class PDFManager {
           .trim()
 
         // Add it to the cache
-        database.pdf
-          .add({
-            hash,
-            text,
-            path: file.path,
-            size: file.stat.size,
-            libVersion,
-          })
-          .then(() => {
-            resolve(text)
-          })
+        await writeCache(cachePath.folder, cachePath.filename, text)
+        resolve(text)
       } catch (e) {
         // In case of error (unreadable PDF or timeout) just add
         // an empty string to the cache
-        database.pdf
-          .add({
-            hash,
-            text: '',
-            path: file.path,
-            size: file.stat.size,
-            libVersion,
-          })
-          .then(() => {
-            resolve('')
-          })
-      }
-    })
-  }
-
-  /**
-   * Removes the outdated cache entries
-   */
-  public async cleanCache(): Promise<void> {
-    database.pdf.each(async item => {
-      if (!(await app.vault.adapter.exists(item.path))) {
-        console.log(item.path + ' does not exist')
+        await writeCache(cachePath.folder, cachePath.filename, '')
+        resolve('')
       }
     })
   }

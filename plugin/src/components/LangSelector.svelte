@@ -1,16 +1,15 @@
 <script>
   import MultiSelect from 'svelte-multiselect'
   import { getOcrLangs } from 'obsidian-text-extract'
-  import { saveSettings, selectedLanguages, settings } from 'src/settings'
-  
-  const langs = getOcrLangs()
+  import { selectedLanguages } from 'src/settings'
 
+  const langs = getOcrLangs()
 </script>
 
 <MultiSelect
   bind:selected="{$selectedLanguages}"
   options="{langs}"
-  maxSelect="{3}"/>
+  maxSelect="{3}" />
 
 <style>
   :global(div.multiselect) {
