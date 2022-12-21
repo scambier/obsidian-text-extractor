@@ -35,7 +35,7 @@ export class TextExtractorSettingsTab extends PluginSettingTab {
     info.createDiv({ cls: 'setting-item-name', text: 'OCR Languages' })
     info.createDiv({
       cls: 'setting-item-description',
-      text: "A list of languages to use for OCR. e.g. if your vault contains documents in English and French, you'd want to add 'en' and 'fr' here.",
+      text: "A list of languages to use for OCR. e.g. if your vault contains documents in English and French, you'd want to add 'eng' and 'fra' here. This settings only applies to images, not PDFs.",
     })
 
     new LangSelector({

@@ -2,9 +2,9 @@
 
 ## What does it do?
 
-The plugin extracts texts from images and PDFs in your vault, and makes them available to other plugins.
+By itself, this plugin does not do anything (yet?). It is meant to be used by other plugins like [Omnisearch](https://github.com/scambier/obsidian-omnisearch), to extract texts from images and PDFs.
 
-By itself, this plugin does not do anything (yet?). It is meant to be used by other plugins like [Omnisearch](https://github.com/scambier/obsidian-omnisearch).
+It exposes a simple API to do so and caches the extracted texts to avoid doing the same work twice.
 
 ## Why?
 
@@ -35,3 +35,5 @@ The plugin is split in two parts:
 
 - The text extraction library, which does the actual work
 - The plugin itself, which is a wrapper around the library and exposes some useful options to the user
+
+Each project is in its own folder, and has its own `package.json` and `node_modules`. The library uses Rollup (easier to setup with Wasm and web workers), while the plugin uses esbuild.
