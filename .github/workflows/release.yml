@@ -7,6 +7,8 @@ on:
 
 env:
   PLUGIN_NAME: text-extractor
+  PLUGIN_PATH: plugin
+  LIB_PATH: lib
   DIST_FOLDER: ./dist
 
 jobs:
@@ -31,18 +33,19 @@ jobs:
       - name: Build Lib
         id: build-lib
         run: |
-          cd lib
+          cd ${{ env.LIB_PATH }}
           pnpm install
           pnpm run build
 
       - name: Build Plugin
         id: build-plugin
         run: |
-          cd plugin
+          cd ${{ env.PLUGIN_PATH }}
           pnpm install
           pnpm run build
+          cd ..
           mkdir ${{ env.PLUGIN_NAME }}
-          cp ${{ env.DIST_FOLDER }}/* ${{ env.PLUGIN_NAME }}
+          cp ${{ env.PLUGIN_PATH }}/${{ env.DIST_FOLDER }}/* ${{ env.PLUGIN_NAME }}
           zip -r ${{ env.PLUGIN_NAME }}.zip ${{ env.PLUGIN_NAME }}
           ls
           echo "::set-output name=tag_name::$(git tag --sort version:refname | tail -n 1)"
@@ -77,7 +80,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ env.DIST_FOLDER }}/main.js
+          asset_path: ${{ env.PLUGIN_PATH }}/${{ env.DIST_FOLDER }}/main.js
           asset_name: main.js
           asset_content_type: text/javascript
 
@@ -99,7 +102,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ env.DIST_FOLDER }}/styles.css
+          asset_path: ${{ env.PLUGIN_PATH }}/${{ env.DIST_FOLDER }}/styles.css
           asset_name: styles.css
           asset_content_type: text/css
 
