@@ -16,6 +16,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - uses: jetli/wasm-pack-action@v0.4.0
+
       - uses: pnpm/action-setup@v2.1.0
         with:
           version: 6.32.4
@@ -26,9 +28,17 @@ jobs:
         with:
           node-version: "14.x"
 
-      - name: Build
-        id: build
+      - name: Build Lib
+        id: build-lib
         run: |
+          cd lib
+          pnpm install
+          pnpm run build
+
+      - name: Build Plugin
+        id: build-plugin
+        run: |
+          cd plugin
           pnpm install
           pnpm run build
           mkdir ${{ env.PLUGIN_NAME }}
