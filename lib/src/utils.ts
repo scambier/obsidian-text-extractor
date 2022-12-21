@@ -1,8 +1,6 @@
-import { Platform, TFile } from 'obsidian'
+import { Platform } from 'obsidian'
 import { type BinaryLike, createHash } from 'crypto'
 import { md5 } from 'pure-md5'
-import type { ExtractedText } from './types'
-import { libVersion } from './globals'
 
 export function makeMD5(data: BinaryLike): string {
   if (Platform.isMobileApp) {
