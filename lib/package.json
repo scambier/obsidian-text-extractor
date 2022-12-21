@@ -1,0 +1,47 @@
+{
+  "name": "obsidian-text-extract",
+  "version": "1.0.4",
+  "description": "",
+  "files": ["dist/**"],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "dev": "wasm-pack build --target web && rollup -c -w",
+    "build": "wasm-pack build --target web && rollup -c",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepublishOnly": "pnpm run build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "AGPL-3.0",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^23.0.0",
+    "@rollup/plugin-json": "^5.0.1",
+    "@rollup/plugin-node-resolve": "^13.3.0",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@tsconfig/svelte": "^3.0.0",
+    "@types/jest": "^27.5.2",
+    "@types/node": "^16.11.64",
+    "@types/pako": "^2.0.0",
+    "babel-jest": "^27.5.1",
+    "builtin-modules": "^3.3.0",
+    "jest": "^27.5.1",
+    "obsidian": "latest",
+    "prettier": "^2.7.1",
+    "rollup": "^2.79.1",
+    "rollup-plugin-base64": "^1.0.1",
+    "rollup-plugin-copy": "^3.4.0",
+    "rollup-plugin-delete": "^2.0.0",
+    "rollup-plugin-terser": "^7.0.2",
+    "rollup-plugin-typescript2": "^0.34.1",
+    "rollup-plugin-web-worker-loader": "^1.6.1",
+    "tslib": "2.3.1",
+    "typescript": "^4.8.4"
+  },
+  "dependencies": {
+    "dexie": "^3.2.2",
+    "p-limit": "^4.0.0",
+    "pure-md5": "^0.1.14",
+    "tesseract.js": "^3.0.3"
+  }
+}

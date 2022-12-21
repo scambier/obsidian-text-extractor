@@ -1,0 +1,28 @@
+# vscode
+.vscode
+
+# Intellij
+*.iml
+.idea
+
+# npm
+node_modules
+dist
+
+# Exclude sourcemaps
+*.map
+
+# obsidian
+data.json
+
+# Exclude macOS Finder (System Explorer) View States
+.DS_Store
+
+dist
+.pnpm-debug.log
+coverage
+
+
+# Added by cargo
+
+target
