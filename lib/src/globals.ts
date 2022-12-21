@@ -15,7 +15,7 @@ const sym = Symbol.for('be.scambier.obsidian-text-extract')
 // @ts-ignore
 if (!globalThis[sym]) {
   console.info(
-    'Obsidian-text-extract - Number of available workers: ' +
+    'Text Extractor - Number of available workers: ' +
       backgroundProcesses
   )
   // @ts-ignore

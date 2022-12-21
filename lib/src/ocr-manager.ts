@@ -2,7 +2,7 @@ import { Platform, TFile } from 'obsidian'
 import Tesseract, { createWorker } from 'tesseract.js'
 import { getCachePath, readCache, writeCache } from './cache'
 import { processQueue } from './globals'
-import type { ExtractedText, OcrOptions } from './types'
+import type { OcrOptions } from './types'
 
 const workerTimeout = 120_000
 

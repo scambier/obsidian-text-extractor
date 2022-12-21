@@ -1,6 +1,6 @@
 import TextExtractorPlugin from './main'
 import { writable } from 'svelte/store'
-import { App, Notice, PluginSettingTab, Setting } from 'obsidian'
+import { PluginSettingTab } from 'obsidian'
 import LangSelector from './components/LangSelector.svelte'
 
 interface TextExtractorSettings {
@@ -10,7 +10,7 @@ interface TextExtractorSettings {
 export class TextExtractorSettingsTab extends PluginSettingTab {
   plugin: TextExtractorPlugin
 
-  constructor(app: App, plugin: TextExtractorPlugin) {
+  constructor(plugin: TextExtractorPlugin) {
     super(app, plugin)
     this.plugin = plugin
 
@@ -41,29 +41,6 @@ export class TextExtractorSettingsTab extends PluginSettingTab {
     new LangSelector({
       target: container.createDiv({ cls: 'setting-item-control' }),
     })
-
-    // // Danger zone
-
-    // new Setting(containerEl).setName('Danger Zone').setHeading()
-
-    // // Reset cache
-
-    // const resetCacheDesc = new DocumentFragment()
-    // resetCacheDesc.createSpan({}, span => {
-    //   span.innerHTML = `Erase all Omnisearch cache data.
-    //   Use this if Omnisearch results are inconsistent, missing, or appear outdated.<br>
-    //   <strong style="color: var(--text-accent)">Needs a restart to fully take effect.</strong>`
-    // })
-    // new Setting(containerEl)
-    //   .setName('Clear cache data')
-    //   .setDesc(resetCacheDesc)
-    //   .addButton(cb => {
-    //     cb.setButtonText('Clear cache')
-    //     cb.onClick(async () => {
-    //       await database.clearCache()
-    //       new Notice('Text Extractor - Cache cleared')
-    //     })
-    //   })
   }
 }
 
