@@ -24,7 +24,7 @@ export class TextExtractorSettingsTab extends PluginSettingTab {
     const { containerEl } = this
     containerEl.empty()
 
-    containerEl.createEl('h2', { text: 'Settings for my awesome plugin.' })
+    containerEl.createEl('h2', { text: 'Text Extractor - Settings' })
 
     // Language selector
 

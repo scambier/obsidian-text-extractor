@@ -20,4 +20,11 @@
   :global(div.multiselect > ul.options) {
     background-color: var(--background-secondary);
   }
+  :global(div.multiselect button) {
+    border-radius: 0;
+  }
+  :global(button) {
+    background-color: transparent;
+    box-shadow: none;
+  }
 </style>
