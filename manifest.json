@@ -7,8 +7,8 @@
 	"author": "Simon Cambier",
 	"authorUrl": "https://github.com/scambier/obsidian-text-extractor",
 	"fundingUrl": {
-        "Github": "https://github.com/sponsors/scambier",
-        "Ko-fi": "https://ko-fi.com/scambier"
-    },
+		"Github": "https://github.com/sponsors/scambier",
+		"Ko-fi": "https://ko-fi.com/scambier"
+	},
 	"isDesktopOnly": false
 }

@@ -2,7 +2,7 @@
   "name": "obsidian-text-extract",
   "version": "0.0.0",
   "private": true,
-  "description": "",
+  "description": "The core library for Obsidian Text Extractor plugin",
   "files": [
     "dist/**"
   ],
@@ -15,7 +15,7 @@
     "prepublishOnly": "pnpm run build"
   },
   "keywords": [],
-  "author": "",
+  "author": "Simon Cambier",
   "license": "AGPL-3.0",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^23.0.0",

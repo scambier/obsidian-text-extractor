@@ -1,15 +1,15 @@
 {
 	"name": "text-extractor",
-	"version": "1.0.0",
-	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
-	"main": "main.js",
+	"version": "0.1.0",
+    "private": true,
+	"description": "A (companion) plugin to facilitate the extraction of text from images (OCR) and PDFs.",
+	"main": "dist/main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
-		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
-		"version": "node version-bump.mjs && git add manifest.json versions.json"
+		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production"
 	},
 	"keywords": [],
-	"author": "",
+	"author": "Simon Cambier",
 	"license": "AGPL-3.0",
 	"devDependencies": {
 		"@tsconfig/svelte": "^3.0.0",
