@@ -20,6 +20,12 @@ export function getCachePath(file: TFile): {
   }
 }
 
+/**
+ * Read the cache for a file if it exists and the languages list has not changed
+ * @param file 
+ * @param optLangs 
+ * @returns 
+ */
 export async function readCache(
   file: TFile,
   optLangs = ''

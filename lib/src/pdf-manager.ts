@@ -28,7 +28,7 @@ class PDFWorker {
 
       const timeout = setTimeout(() => {
         this.worker.terminate()
-        console.warn('Obsidian-text-extract - Worker timeout')
+        console.warn('Text Extractor - PDF Worker timeout')
         reject('timeout')
         this.running = false
       }, workerTimeout)

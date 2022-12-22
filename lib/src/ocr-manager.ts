@@ -45,7 +45,7 @@ class OCRWorker {
 
       const timeout = setTimeout(() => {
         this.worker.terminate()
-        console.warn('Obsidian-text-extract - Worker timeout')
+        console.warn('Text Extractor - OCR Worker timeout for ' + msg.name)
         reject('timeout')
         this.running = false
       }, workerTimeout)
@@ -55,9 +55,8 @@ class OCRWorker {
         clearTimeout(timeout)
         return resolve({ text: data.text, langs })
       } catch (e) {
-        console.error(
-          'Obsidian-text-extract - OCR Worker timeout for ' + msg.name
-        )
+        console.error('Text Extractor - OCR Worker exception for ' + msg.name)
+        console.error(e)
         resolve({ text: '', langs })
       } finally {
         this.running = false
@@ -72,10 +71,7 @@ class OCRManager {
    * @param file
    * @param options - An array of languages to try. If not provided, the default is English
    */
-  public async getImageText(
-    file: TFile,
-    options: OcrOptions = { langs: ['eng'] }
-  ): Promise<string> {
+  public async getImageText(file: TFile, options: OcrOptions): Promise<string> {
     return processQueue(this._getImageText, file, options)
   }
 
@@ -93,7 +89,7 @@ class OCRManager {
     if (Platform.isMobile) {
       return ''
     }
-    
+
     // The text is not cached, extract it
     const cachePath = getCachePath(file)
     const data = new Uint8ClampedArray(await app.vault.readBinary(file))
