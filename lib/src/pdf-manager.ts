@@ -45,10 +45,16 @@ class PDFWorker {
 
 class PDFManager {
   public async getPdfText(file: TFile): Promise<string> {
-    return processQueue(this._getPdfText, file)
+    try {
+      return processQueue.add(() => this.#getPdfText(file))
+    } catch (e) {
+      console.warn(`Text Extractor - Error while extracting text from ${file.basename}`)
+      console.warn(e)
+      return ''
+    }
   }
 
-  private async _getPdfText(file: TFile): Promise<string> {
+  async #getPdfText(file: TFile): Promise<string> {
     // Get the text from the cache if it exists
     const cache = await readCache(file)
     if (cache) {

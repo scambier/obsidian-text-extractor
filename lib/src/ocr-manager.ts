@@ -72,13 +72,16 @@ class OCRManager {
    * @param options - An array of languages to try. If not provided, the default is English
    */
   public async getImageText(file: TFile, options: OcrOptions): Promise<string> {
-    return processQueue(this._getImageText, file, options)
+    try {
+      return processQueue.add(() => this.#getImageText(file, options))
+    } catch (e) {
+      console.warn(`Text Extractor - Error while extracting text from ${file.basename}`)
+      console.warn(e)
+      return ''
+    }
   }
 
-  private async _getImageText(
-    file: TFile,
-    options: OcrOptions
-  ): Promise<string> {
+  async #getImageText(file: TFile, options: OcrOptions): Promise<string> {
     const optLangs = options.langs.sort().join('+')
     // Get the text from the cache if it exists
     const cache = await readCache(file, optLangs)

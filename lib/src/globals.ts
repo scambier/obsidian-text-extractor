@@ -1,7 +1,6 @@
-import pLimit, { LimitFunction } from 'p-limit'
 import { Platform } from 'obsidian'
-// @ts-ignore
-import * as data from '../package.json'
+import data from '../package.json'
+import PQueue from 'p-queue'
 
 export const libVersion = data.version
 
@@ -11,16 +10,9 @@ if (backgroundProcesses == cpuCount) {
   backgroundProcesses = 1
 }
 
-const sym = Symbol.for('be.scambier.obsidian-text-extract')
-// @ts-ignore
-if (!globalThis[sym]) {
-  console.info(
-    'Text Extractor - Number of available workers: ' +
-      backgroundProcesses
-  )
-  // @ts-ignore
-  globalThis[sym] = pLimit(backgroundProcesses)
-}
+console.info(
+  `Text Extractor - Number of available workers: ${backgroundProcesses}`
+)
 
-// @ts-ignore
-export const processQueue: LimitFunction = globalThis[sym]
+// export const processQueue = pLimit(backgroundProcesses)
+export const processQueue = new PQueue({ concurrency: backgroundProcesses })

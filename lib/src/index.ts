@@ -3,15 +3,19 @@ import { ocrManager } from './ocr-manager'
 import { ocrLangs } from './ocr-langs'
 import type { TFile } from 'obsidian'
 import type { OcrOptions } from './types'
+import { processQueue } from './globals'
 
 /**
  * Returns a promise that resolves to the text extracted from the file.
  * On mobile, if the text is not already extracted and cached, will return an empty string.
  * Will throw an error if the file type is not supported; check canFileBeExtracted() first.
- * @param file 
- * @returns 
+ * @param file
+ * @returns
  */
-function extractText(file: TFile, options?: Partial<OcrOptions>): Promise<string> {
+function extractText(
+  file: TFile,
+  options?: Partial<OcrOptions>
+): Promise<string> {
   const opts = Object.assign({}, { langs: ['eng'] }, options)
 
   if (isFilePDF(file.path)) {
@@ -34,8 +38,8 @@ function isFileImage(path: string): boolean {
 
 /**
  * Returns true if the file can be extracted
- * @param file 
- * @returns 
+ * @param file
+ * @returns
  */
 function canFileBeExtracted(file: TFile): boolean {
   return isFilePDF(file.path) || isFileImage(file.path)
@@ -48,4 +52,12 @@ function getOcrLangs() {
   return ocrLangs
 }
 
-export { extractText, getOcrLangs, canFileBeExtracted }
+/**
+ * Clears the process queue.
+ * This stops any pending text extraction.
+ */
+function clearProcessQueue() {
+  processQueue.clear()
+}
+
+export { extractText, getOcrLangs, canFileBeExtracted, clearProcessQueue }
