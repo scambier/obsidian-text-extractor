@@ -1,5 +1,9 @@
 # Obsidian Text Extractor
 
+## Installation
+
+Text Extractor is not yet available on the Obsidian community plugins. You can install it manually by downloading the latest release from the [releases page](https://github.com/scambier/obsidian-text-extractor/releases) or by using the [BRAT plugin manager](https://github.com/TfTHacker/obsidian42-brat).
+
 ## What does it do?
 
 By itself, this plugin does not do anything (yet?). It is meant to be used by other plugins like [Omnisearch](https://github.com/scambier/obsidian-omnisearch), to extract texts from images and PDFs.
@@ -21,13 +25,23 @@ Text extraction does not work on mobile, so the plugin will use the synced cache
 ## Develop alongside Obsidian Text Extractor
 
 ```ts
-const extractor = app.plugins.plugins['text-extractor']?.api
-if (extractor) {
-    await extractor.extractText(file)
+// Add this type somewhere in your code
+export type TextExtractorApi = {
+  extractText: (
+    file: TFile,
+    ocrOptions?: {
+      langs: string[]
+    }
+  ) => Promise<string>
+  getOcrLangs: () => string[]
+  canFileBeExtracted: (filePath: string) => boolean
+}
+
+// Then, you can just use this function to get the API
+export function getTextExtractor(): TextExtractorApi | undefined {
+  return (app as any).plugins?.plugins?.['text-extractor'].api
 }
 ```
-
-TODO: add a declaration file for the API
 
 ## Development
 

@@ -37,12 +37,12 @@ function isFileImage(path: string): boolean {
 }
 
 /**
- * Returns true if the file can be extracted
- * @param file
+ * Returns true if the filepath is a supported file type.
+ * @param filePath
  * @returns
  */
-function canFileBeExtracted(file: TFile): boolean {
-  return isFilePDF(file.path) || isFileImage(file.path)
+function canFileBeExtracted(filePath: string): boolean {
+  return isFilePDF(filePath) || isFileImage(filePath)
 }
 
 /**
