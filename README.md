@@ -1,8 +1,12 @@
 # Obsidian Text Extractor
 
+## ⚠️ Early beta
+
+I'm [dogfooding](https://en.wikipedia.org/wiki/Eating_your_own_dog_food) this plugin with Omnisearch, but the public api is yet to be fully stabilized. It's unlikely it will drastically change, but don't make your own plugins critically dependent on it yet. 
+
 ## Installation
 
-Text Extractor is not yet available on the Obsidian community plugins. You can install it manually by downloading the latest release from the [releases page](https://github.com/scambier/obsidian-text-extractor/releases) or by using the [BRAT plugin manager](https://github.com/TfTHacker/obsidian42-brat).
+Text Extractor is not yet available on the Obsidian community plugins repository. You can install it manually by downloading the latest release from the [releases page](https://github.com/scambier/obsidian-text-extractor/releases) or by using the [BRAT plugin manager](https://github.com/TfTHacker/obsidian42-brat).
 
 ## What does it do?
 
