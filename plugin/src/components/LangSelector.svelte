@@ -23,8 +23,9 @@
   :global(div.multiselect button) {
     border-radius: 0;
   }
-  :global(button) {
+  :global(button:not(.clickable-icon)) {
     background-color: transparent;
     box-shadow: none;
+    width: 1em;
   }
 </style>

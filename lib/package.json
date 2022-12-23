@@ -1,13 +1,14 @@
 {
   "name": "obsidian-text-extract",
   "version": "0.0.0",
+  "type": "module",
   "private": true,
   "description": "The core library for Obsidian Text Extractor plugin",
   "files": [
     "dist/**"
   ],
   "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "types": "dist/src/index.d.ts",
   "scripts": {
     "dev": "wasm-pack build --target web && rollup -c -w",
     "build": "wasm-pack build --target web && rollup -c",
