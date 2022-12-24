@@ -7,25 +7,31 @@ import type { OcrOptions } from './types'
 const workerTimeout = 120_000
 
 class OCRWorker {
-  private static pool: OCRWorker[] = []
-  private running = false
-  private ready = false
-
-  private constructor(private worker: Tesseract.Worker) {}
+  static #pool: OCRWorker[] = []
+  #running = false
+  #ready = false
 
   static getWorker(): OCRWorker {
-    const free = OCRWorker.pool.find(w => !w.running && w.ready)
+    const free = OCRWorker.#pool.find(w => !w.#running && w.#ready)
     if (free) {
       return free
     }
+    // Spawn a new worker
     const worker = new OCRWorker(
       createWorker({
-        cachePath: 'tesseract',
+        cachePath: 'tesseract-' + app.appId,
       })
     )
-    OCRWorker.pool.push(worker)
+    OCRWorker.#pool.push(worker)
     return worker
   }
+
+  static #destroyWorker(ocrWorker: OCRWorker) {
+    ocrWorker.worker.terminate()
+    OCRWorker.#pool = OCRWorker.#pool.filter(w => w !== ocrWorker)
+  }
+
+  private constructor(private worker: Tesseract.Worker) {}
 
   public async run(msg: {
     imageData: Buffer
@@ -33,21 +39,21 @@ class OCRWorker {
     options: OcrOptions
   }): Promise<{ text: string; langs: string }> {
     return new Promise(async (resolve, reject) => {
-      this.running = true
+      this.#running = true
       const langs = msg.options.langs.join('+')
 
-      if (!this.ready) {
+      if (!this.#ready) {
         await this.worker.load()
         await this.worker.loadLanguage(langs)
         await this.worker.initialize(msg.options.langs[0])
-        this.ready = true
+        this.#ready = true
       }
 
       const timeout = setTimeout(() => {
         this.worker.terminate()
         console.warn('Text Extractor - OCR Worker timeout for ' + msg.name)
         reject('timeout')
-        this.running = false
+        OCRWorker.#destroyWorker(this)
       }, workerTimeout)
 
       try {
@@ -59,7 +65,7 @@ class OCRWorker {
         console.error(e)
         resolve({ text: '', langs })
       } finally {
-        this.running = false
+        this.#running = false
       }
     })
   }
@@ -75,7 +81,9 @@ class OCRManager {
     try {
       return processQueue.add(() => this.#getImageText(file, options))
     } catch (e) {
-      console.warn(`Text Extractor - Error while extracting text from ${file.basename}`)
+      console.warn(
+        `Text Extractor - Error while extracting text from ${file.basename}`
+      )
       console.warn(e)
       return ''
     }

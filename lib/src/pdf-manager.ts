@@ -1,43 +1,48 @@
 import { Platform, TFile } from 'obsidian'
 import WebWorker from 'web-worker:./pdf-worker.ts'
-import { makeMD5 } from './utils'
 import { processQueue } from './globals'
 import { getCachePath, readCache, writeCache } from './cache'
 
 const workerTimeout = 120_000
 
 class PDFWorker {
-  private static pool: PDFWorker[] = []
+  static #pool: PDFWorker[] = []
+  #running = false
+
   static getWorker(): PDFWorker {
-    const free = PDFWorker.pool.find(w => !w.running)
+    const free = PDFWorker.#pool.find(w => !w.#running)
     if (free) {
       return free
     }
+    // Spawn a new worker
     const worker = new PDFWorker(new WebWorker({ name: 'PDF Text Extractor' }))
-    PDFWorker.pool.push(worker)
+    PDFWorker.#pool.push(worker)
     return worker
   }
 
-  private running = false
+  static #destroyWorker(pdfWorker: PDFWorker) {
+    pdfWorker.worker.terminate()
+    PDFWorker.#pool = PDFWorker.#pool.filter(w => w !== pdfWorker)
+  }
+
 
   private constructor(private worker: Worker) {}
 
   public async run(msg: { data: Uint8Array; name: string }): Promise<any> {
     return new Promise((resolve, reject) => {
-      this.running = true
+      this.#running = true
 
       const timeout = setTimeout(() => {
-        this.worker.terminate()
-        console.warn('Text Extractor - PDF Worker timeout')
+        console.warn('Text Extractor - PDF Worker timeout for ', msg.name)
         reject('timeout')
-        this.running = false
+        PDFWorker.#destroyWorker(this)
       }, workerTimeout)
 
       this.worker.postMessage(msg)
       this.worker.onmessage = evt => {
         clearTimeout(timeout)
         resolve(evt)
-        this.running = false
+        this.#running = false
       }
     })
   }
@@ -48,7 +53,9 @@ class PDFManager {
     try {
       return processQueue.add(() => this.#getPdfText(file))
     } catch (e) {
-      console.warn(`Text Extractor - Error while extracting text from ${file.basename}`)
+      console.warn(
+        `Text Extractor - Error while extracting text from ${file.basename}`
+      )
       console.warn(e)
       return ''
     }
@@ -68,9 +75,8 @@ class PDFManager {
     // The PDF is not cached, extract it
     const cachePath = getCachePath(file)
     const data = new Uint8Array(await app.vault.readBinary(file))
-    const hash = makeMD5(data)
-
     const worker = PDFWorker.getWorker()
+
     return new Promise(async (resolve, reject) => {
       try {
         const res = await worker.run({ data, name: file.basename })
