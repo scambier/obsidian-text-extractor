@@ -1,24 +1,16 @@
 # Obsidian Text Extractor
 
+Text extraction is a useful feature, but it is not easy to implement, and consumes a lot of resources.
+
+**With this plugin, I hope to provide a unified way to extract texts from images & PDFs, and make it available to other plugins.** This way, other plugins can use it without having to worry about the implementation details, and without having to needlessly consume resources.
+
 ## ⚠️ Early beta
 
-I'm [dogfooding](https://en.wikipedia.org/wiki/Eating_your_own_dog_food) this plugin with Omnisearch, but the public api is yet to be fully stabilized. It's unlikely it will drastically change, but don't make your own plugins critically dependent on it yet. 
+I'm [dogfooding](https://en.wikipedia.org/wiki/Eating_your_own_dog_food) this plugin with [Omnisearch](https://github.com/scambier/obsidian-omnisearch), but the public api is yet to be fully stabilized. It's unlikely it will drastically change, but don't make your own plugins critically dependent on it yet. 
 
 ## Installation
 
 Text Extractor is not yet available on the Obsidian community plugins repository. You can install it manually by downloading the latest release from the [releases page](https://github.com/scambier/obsidian-text-extractor/releases) or by using the [BRAT plugin manager](https://github.com/TfTHacker/obsidian42-brat).
-
-## What does it do?
-
-By itself, this plugin does not do anything (yet?). It is meant to be used by other plugins like [Omnisearch](https://github.com/scambier/obsidian-omnisearch), to extract texts from images and PDFs.
-
-It exposes a simple API to do so and caches the extracted texts to avoid doing the same work twice.
-
-## Why?
-
-Text extraction is a useful feature, but it is not easy to implement, and consumes a lot of resources. With this plugin, I hope to provide a unified and efficient API to extract texts from images and PDFs. This way, other plugins can use it without having to worry about the implementation details, and without having to needlessly consume resources.
-
-With this plugin, I hope to provide a unified way to extract texts from images and PDFs, and make it available to other plugins.
 
 ## Cache & Sync
 
@@ -26,7 +18,7 @@ The plugin caches the extracted texts as local small .json files inside the plug
 
 Text extraction does not work on mobile, so the plugin will use the synced cached texts if available. If not, an empty string will be returned.
 
-## Develop alongside Obsidian Text Extractor
+## Development _alongside_ Obsidian Text Extractor
 
 ```ts
 // Add this type somewhere in your code
@@ -47,7 +39,7 @@ export function getTextExtractor(): TextExtractorApi | undefined {
 }
 ```
 
-## Development
+## Development _of_ Obsidian Text Extractor
 
 While this plugin is first developped for Omnisearch, it's totally agnostic and I'd like it to become a community effort. If you wish to submit a PR, please open an issue first so we can discuss the feature.
 
