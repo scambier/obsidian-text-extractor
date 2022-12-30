@@ -6,24 +6,26 @@
   const langs = getOcrLangs()
 </script>
 
-<MultiSelect
-  bind:selected="{$selectedLanguages}"
-  options="{langs}"
-  maxSelect="{3}" />
+<div class="text-extract">
+  <MultiSelect
+    bind:selected="{$selectedLanguages}"
+    options="{langs}"
+    maxSelect="{3}" />
+</div>
 
 <style>
-  :global(div.multiselect) {
+  .text-extract :global(div.multiselect) {
     color: var(--text-primary);
     border: var(--input-border-width) solid var(--background-modifier-border);
     background-color: var(--background-secondary);
   }
-  :global(div.multiselect > ul.options) {
+  .text-extract :global(div.multiselect > ul.options) {
     background-color: var(--background-secondary);
   }
-  :global(div.multiselect button) {
+  .text-extract :global(div.multiselect button) {
     border-radius: 0;
   }
-  :global(button:not(.clickable-icon)) {
+  .text-extract :global(button:not(.clickable-icon)) {
     background-color: transparent;
     box-shadow: none;
     width: 1em;
