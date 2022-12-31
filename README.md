@@ -23,13 +23,7 @@ Text extraction does not work on mobile, so the plugin will use the synced cache
 ```ts
 // Add this type somewhere in your code
 export type TextExtractorApi = {
-  extractText: (
-    file: TFile,
-    ocrOptions?: {
-      langs: string[]
-    }
-  ) => Promise<string>
-  getOcrLangs: () => string[]
+  extractText: (file: TFile) => Promise<string>
   canFileBeExtracted: (filePath: string) => boolean
 }
 
@@ -37,6 +31,9 @@ export type TextExtractorApi = {
 export function getTextExtractor(): TextExtractorApi | undefined {
   return (app as any).plugins?.plugins?.['text-extractor'].api
 }
+
+// And use it like this
+const text = await getTextExtractor()?.extractText(file)
 ```
 
 ## Development _of_ Obsidian Text Extractor

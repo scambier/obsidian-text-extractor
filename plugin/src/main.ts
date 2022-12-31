@@ -1,24 +1,18 @@
 import { Plugin, TFile } from 'obsidian'
-import { loadSettings, TextExtractorSettingsTab } from './settings'
+import { loadSettings, settings, TextExtractorSettingsTab } from './settings'
 import * as TextExtract from 'obsidian-text-extract'
 
 export type TextExtractorApi = {
-  extractText: (
-    file: TFile,
-    ocrOptions?: {
-      langs: string[]
-    }
-  ) => Promise<string>
-  getOcrLangs: () => string[]
+  extractText: (file: TFile) => Promise<string>
   canFileBeExtracted: (filePath: string) => boolean
 }
 
 export default class TextExtractorPlugin extends Plugin {
   public api: TextExtractorApi = {
-    extractText:
-      TextExtract.extractText as TextExtractorApi['extractText'],
-    getOcrLangs:
-      TextExtract.getOcrLangs as unknown as TextExtractorApi['getOcrLangs'],
+    async extractText(file:TFile): Promise<string> {
+      const langs = settings.ocrLanguages
+      return await TextExtract.extractText(file, { langs })
+    },
     canFileBeExtracted: TextExtract.canFileBeExtracted,
   }
 

@@ -48,7 +48,7 @@ function canFileBeExtracted(filePath: string): boolean {
 /**
  * Returns the list of supported languages for OCR
  */
-function getOcrLangs() {
+function getOcrLangs(): typeof ocrLangs {
   return ocrLangs
 }
 

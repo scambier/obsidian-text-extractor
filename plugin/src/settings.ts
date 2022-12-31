@@ -2,9 +2,10 @@ import TextExtractorPlugin from './main'
 import { writable } from 'svelte/store'
 import { PluginSettingTab } from 'obsidian'
 import LangSelector from './components/LangSelector.svelte'
+import { ocrLangs } from 'obsidian-text-extract/dist/src/ocr-langs'
 
 interface TextExtractorSettings {
-  ocrLanguages: string[]
+  ocrLanguages: typeof ocrLangs[number][]
 }
 
 export class TextExtractorSettingsTab extends PluginSettingTab {
