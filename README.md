@@ -10,7 +10,7 @@ I'm [dogfooding](https://en.wikipedia.org/wiki/Eating_your_own_dog_food) this pl
 
 ## Installation
 
-Text Extractor is not yet available on the Obsidian community plugins repository. You can install it manually by downloading the latest release from the [releases page](https://github.com/scambier/obsidian-text-extractor/releases) or by using the [BRAT plugin manager](https://github.com/TfTHacker/obsidian42-brat).
+Text Extractor is available on the [Obsidian community plugins repository](https://obsidian.md/plugins?search=Text%20Extractor). You can also install it manually by downloading the latest release from the [releases page](https://github.com/scambier/obsidian-text-extractor/releases) or by using the [BRAT plugin manager](https://github.com/TfTHacker/obsidian42-brat).
 
 ## Cache & Sync
 
