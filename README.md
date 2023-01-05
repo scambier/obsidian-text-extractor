@@ -29,7 +29,7 @@ export type TextExtractorApi = {
 
 // Then, you can just use this function to get the API
 export function getTextExtractor(): TextExtractorApi | undefined {
-  return (app as any).plugins?.plugins?.['text-extractor'].api
+  return (app as any).plugins?.plugins?.['text-extractor']?.api
 }
 
 // And use it like this
