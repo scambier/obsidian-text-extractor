@@ -1,11 +1,12 @@
 import TextExtractorPlugin from './main'
 import { writable } from 'svelte/store'
-import { PluginSettingTab } from 'obsidian'
+import { PluginSettingTab, Setting } from 'obsidian'
 import LangSelector from './components/LangSelector.svelte'
 import { ocrLangs } from 'obsidian-text-extract/dist/src/ocr-langs'
 
 interface TextExtractorSettings {
   ocrLanguages: typeof ocrLangs[number][]
+  rightClickMenu: boolean
 }
 
 export class TextExtractorSettingsTab extends PluginSettingTab {
@@ -42,11 +43,25 @@ export class TextExtractorSettingsTab extends PluginSettingTab {
     new LangSelector({
       target: container.createDiv({ cls: 'setting-item-control' }),
     })
+
+    // Right click menu
+    new Setting(containerEl)
+      .setName('Right click menu')
+      .setDesc(
+        'Add a "Text Extractor" menu to the right click menu in the file explorer.'
+      )
+      .addToggle(toggle => {
+        toggle.setValue(settings.rightClickMenu).onChange(v => {
+          settings.rightClickMenu = v
+          saveSettings(this.plugin)
+        })
+      })
   }
 }
 
 const DEFAULT_SETTINGS: TextExtractorSettings = {
   ocrLanguages: ['eng'],
+  rightClickMenu: true,
 }
 
 export const selectedLanguages = writable(DEFAULT_SETTINGS.ocrLanguages)

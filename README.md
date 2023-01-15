@@ -1,5 +1,11 @@
 # Obsidian Text Extractor
 
+[![Sponsor me](https://img.shields.io/badge/%E2%9D%A4%20Like%20this%20plugin%3F-Sponsor%20me!-ff69b4)](https://github.com/sponsors/scambier)  
+![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/scambier/obsidian-text-extractor)
+![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/scambier/obsidian-text-extractor?include_prereleases&label=BRAT%20beta)
+
+---
+
 Text extraction is a useful feature, but it is not easy to implement, and consumes a lot of resources.
 
 **With this plugin, I hope to provide a unified way to extract texts from images & PDFs, and make it available to other plugins.** This way, other plugins can use it without having to worry about the implementation details, and without having to needlessly consume resources.
@@ -14,7 +20,7 @@ Text Extractor is available on the [Obsidian community plugins repository](https
 
 ## Cache & Sync
 
-The plugin caches the extracted texts as local small .json files inside the plugin directory. Those files can be synced between your devices.
+The plugin caches the extracted texts as local small `.json` files inside the plugin directory. Those files can be synced between your devices.
 
 Text extraction does not work on mobile, so the plugin will use the synced cached texts if available. If not, an empty string will be returned.
 
