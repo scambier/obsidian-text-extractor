@@ -1,6 +1,8 @@
 # Obsidian Text Extractor
 
 [![Sponsor me](https://img.shields.io/badge/%E2%9D%A4%20Like%20this%20plugin%3F-Sponsor%20me!-ff69b4)](https://github.com/sponsors/scambier)  
+![Obsidian plugin](https://img.shields.io/endpoint?url=https%3A%2F%2Fscambier.xyz%2Fobsidian-endpoints%2Ftext-extractor.json)
+![GitHub release (latest by date and asset)](https://img.shields.io/github/downloads/scambier/obsidian-text-extractor/latest/main.js)  
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/scambier/obsidian-text-extractor)
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/scambier/obsidian-text-extractor?include_prereleases&label=BRAT%20beta)
 
