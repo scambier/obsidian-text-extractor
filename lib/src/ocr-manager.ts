@@ -1,10 +1,8 @@
 import { Platform, TFile } from 'obsidian'
 import Tesseract, { createWorker } from 'tesseract.js'
 import { getCachePath, readCache, writeCache } from './cache'
-import { processQueue } from './globals'
+import { processQueue, workerTimeout } from './globals'
 import type { OcrOptions } from './types'
-
-const workerTimeout = 120_000
 
 class OCRWorker {
   static #pool: OCRWorker[] = []

@@ -1,9 +1,7 @@
 import { Platform, TFile } from 'obsidian'
 import WebWorker from 'web-worker:./pdf-worker.ts'
-import { processQueue } from './globals'
+import { processQueue, workerTimeout } from './globals'
 import { getCachePath, readCache, writeCache } from './cache'
-
-const workerTimeout = 120_000
 
 class PDFWorker {
   static #pool: PDFWorker[] = []

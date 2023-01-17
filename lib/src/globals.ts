@@ -11,8 +11,9 @@ if (backgroundProcesses == cpuCount) {
 }
 
 console.info(
-  `Text Extractor - Number of available workers: ${backgroundProcesses}`
+  `Text Extractor - Number of available workers: ${backgroundProcesses}`,
 )
 
-// export const processQueue = pLimit(backgroundProcesses)
-export const processQueue = new PQueue({ concurrency: backgroundProcesses })
+export const workerTimeout = 120_000
+
+export const processQueue = new PQueue({ concurrency: backgroundProcesses, timeout: workerTimeout + 100 })
