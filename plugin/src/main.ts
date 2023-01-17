@@ -2,7 +2,6 @@ import { MenuItem, Platform, Plugin, TFile } from 'obsidian'
 import { loadSettings, settings, TextExtractorSettingsTab } from './settings'
 import * as TextExtract from 'obsidian-text-extract'
 import { canFileBeExtracted, extractText } from 'obsidian-text-extract'
-const { clipboard } = require('electron')
 
 export type TextExtractorApi = {
   extractText: (file: TFile) => Promise<string>
@@ -29,6 +28,7 @@ export default class TextExtractorPlugin extends Plugin {
             const submenu = item.setSubmenu()
             // Copy to clipboard
             if (Platform.isDesktopApp) {
+              const { clipboard } = require('electron')
               submenu.addItem(item => {
                 item
                   .setTitle('Extract Text to clipboard')
