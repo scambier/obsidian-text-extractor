@@ -4,7 +4,7 @@ import { ocrLangs } from './ocr-langs'
 import type { TFile } from 'obsidian'
 import type { OcrOptions } from './types'
 import { processQueue } from './globals'
-import { getCachePath } from './cache'
+import { getCacheBasePath, getCachePath } from './cache'
 
 /**
  * Returns a promise that resolves to the text extracted from the file.
@@ -81,4 +81,5 @@ export {
   clearProcessQueue,
   isInCache,
   removeFromCache,
+  getCacheBasePath,
 }
