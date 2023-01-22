@@ -10,11 +10,12 @@ import { processQueue } from './globals'
  * On mobile, if the text is not already extracted and cached, will return an empty string.
  * Will throw an error if the file type is not supported; check canFileBeExtracted() first.
  * @param file
+ * @param options - An array of languages to try. If not provided, the default is English
  * @returns
  */
 function extractText(
   file: TFile,
-  options?: Partial<OcrOptions>
+  options: Partial<OcrOptions>
 ): Promise<string> {
   const opts = Object.assign({}, { langs: ['eng'] }, options)
 
