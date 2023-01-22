@@ -1,11 +1,13 @@
 import TextExtractorPlugin from './main'
 import { writable } from 'svelte/store'
-import { PluginSettingTab, Setting } from 'obsidian'
+import { Notice, PluginSettingTab, Setting } from 'obsidian'
 import LangSelector from './components/LangSelector.svelte'
-import { ocrLangs } from 'obsidian-text-extract/dist/src/ocr-langs'
+import { getOcrLangs } from 'obsidian-text-extract'
+// Non-public API
+import { getCacheBasePath } from 'obsidian-text-extract/src/cache'
 
 interface TextExtractorSettings {
-  ocrLanguages: typeof ocrLangs[number][]
+  ocrLanguages: ReturnType<typeof getOcrLangs>[number][]
   rightClickMenu: boolean
 }
 
@@ -37,7 +39,8 @@ export class TextExtractorSettingsTab extends PluginSettingTab {
     info.createDiv({ cls: 'setting-item-name', text: 'OCR Languages' })
     info.createDiv({
       cls: 'setting-item-description',
-      text: "A list of languages to use for OCR. e.g. if your vault contains documents in English and French, you'd want to add 'eng' and 'fra' here. This settings only applies to images, not PDFs.",
+      text: `A list of languages to use for OCR. e.g. if your vault contains documents in English and French, you'd want to add 'eng' and 'fra' here.
+        This setting only applies to images, not PDFs.`,
     })
 
     new LangSelector({
@@ -48,14 +51,34 @@ export class TextExtractorSettingsTab extends PluginSettingTab {
     new Setting(containerEl)
       .setName('Right click menu')
       .setDesc(
-        'Add a "Text Extractor" menu to the right click menu in the file explorer.'
+        'Add "Text Extractor" actions to the right click menu in the file explorer.'
       )
       .addToggle(toggle => {
-        toggle.setValue(settings.rightClickMenu).onChange(v => {
+        toggle.setValue(settings.rightClickMenu).onChange(async v => {
           settings.rightClickMenu = v
-          saveSettings(this.plugin)
+          await saveSettings(this.plugin)
         })
       })
+
+    //#region Danger Zone
+    new Setting(containerEl).setName('Danger Zone').setHeading()
+
+    const resetCacheDesc = new DocumentFragment()
+    resetCacheDesc.createSpan({}, span => {
+      span.innerHTML = `Erase all Text Extractor cache data. Use this if you want to re-extract all your files, e.g after a change in language settings.<br>
+        Be careful that re-extracting all your files can take a long time.`
+    })
+    new Setting(containerEl)
+      .setName('Clear cache data')
+      .setDesc(resetCacheDesc)
+      .addButton(cb => {
+        cb.setButtonText('Clear cache')
+        cb.onClick(async () => {
+          await app.vault.adapter.rmdir(getCacheBasePath(), true)
+          new Notice('Text Extract - Cache cleared.')
+        })
+      })
+    //#endregion Danger Zone
   }
 }
 

@@ -1,12 +1,17 @@
-import { MenuItem, Platform, Plugin, TFile } from 'obsidian'
+import { MenuItem, Notice, Platform, Plugin, TFile } from 'obsidian'
 import { loadSettings, settings, TextExtractorSettingsTab } from './settings'
 import * as TextExtract from 'obsidian-text-extract'
-import { canFileBeExtracted, extractText } from 'obsidian-text-extract'
-import { getCachePath } from "obsidian-text-extract/src/cache";
+import {
+  canFileBeExtracted,
+  extractText,
+  isInCache,
+  removeFromCache,
+} from 'obsidian-text-extract'
 
 export type TextExtractorApi = {
   extractText: (file: TFile) => Promise<string>
   canFileBeExtracted: (filePath: string) => boolean
+  isInCache: (file: TFile) => Promise<boolean>
 }
 
 export default class TextExtractorPlugin extends Plugin {
@@ -16,6 +21,7 @@ export default class TextExtractorPlugin extends Plugin {
       return await TextExtract.extractText(file, { langs })
     },
     canFileBeExtracted: TextExtract.canFileBeExtracted,
+    isInCache: TextExtract.isInCache,
   }
 
   async onload() {
@@ -36,9 +42,9 @@ export default class TextExtractorPlugin extends Plugin {
                   .setTitle('Extract Text to clipboard')
                   .setIcon('clipboard-copy')
                   .onClick(async () => {
-                    const langs = settings.ocrLanguages
-                    const text = await extractText(file, { langs })
+                    let text = await extractTextWithSettings(file)
                     await clipboard.writeText(text)
+                    new Notice('Text Extractor - Text copied to clipboard')
                   })
               })
             }
@@ -49,17 +55,32 @@ export default class TextExtractorPlugin extends Plugin {
                 .setTitle('Extract Text into a new note')
                 .setIcon('document')
                 .onClick(async () => {
-                  const langs = settings.ocrLanguages
-                  let text = await extractText(file, { langs })
+                  let text = await extractTextWithSettings(file)
                   text = `${text}\n\n![[${file.path}]]`
                   // Create a new note and open it
                   const newFile = await app.vault.create(
                     file.basename + '.md',
-                    text,
+                    text
                   )
                   await app.workspace.openLinkText(newFile.basename, '', true)
                 })
             })
+
+            // Locate cache file
+            if (Platform.isDesktopApp) {
+              submenu.addSeparator()
+              submenu.addItem(item => {
+                item
+                  .setTitle('Clear cache for this file')
+                  .setIcon('trash')
+                  .onClick(async () => {
+                    await removeFromCache(file)
+                    new Notice(
+                      `Text Extractor - Removed ${file.path} from cache`
+                    )
+                  })
+              })
+            }
           })
         }
       })
@@ -69,4 +90,14 @@ export default class TextExtractorPlugin extends Plugin {
   onunload() {
     TextExtract.clearProcessQueue()
   }
+}
+
+async function extractTextWithSettings(file: TFile) {
+  if (!(await isInCache(file))) {
+    new Notice(
+      `Text Extractor - Extracting text from file ${file.path}, please wait...`
+    )
+  }
+  const langs = settings.ocrLanguages
+  return await extractText(file, { langs })
 }

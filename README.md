@@ -43,6 +43,7 @@ The exposed API:
 export type TextExtractorApi = {
   extractText: (file: TFile) => Promise<string>
   canFileBeExtracted: (filePath: string) => boolean
+  isInCache: (file: TFile) => Promise<boolean>
 }
 
 // Then, you can just use this function to get the API

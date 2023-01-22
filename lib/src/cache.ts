@@ -2,6 +2,11 @@ import type { TFile } from 'obsidian'
 import { libVersion } from './globals'
 import type { ExtractedText } from './types'
 import { makeMD5 } from './utils'
+import { isInCache } from './index'
+
+export function getCacheBasePath(): string {
+  return `${app.vault.configDir}/plugins/text-extractor/cache`
+}
 
 export function getCachePath(file: TFile): {
   filename: string
@@ -11,7 +16,7 @@ export function getCachePath(file: TFile): {
   const slug = file.path.replace(/\//g, '-')
   const hash = makeMD5(file.path)
   const subFolder = file.basename.slice(0, 2).toLowerCase()
-  const folder = `${app.vault.configDir}/plugins/text-extractor/cache/${subFolder}`
+  const folder = `${getCacheBasePath()}/${subFolder}`
   const filename = `${slug}-${hash}.json`
   return {
     folder,
@@ -22,9 +27,9 @@ export function getCachePath(file: TFile): {
 
 /**
  * Read the cache for a file if it exists and the languages list has not changed
- * @param file 
- * @param optLangs 
- * @returns 
+ * @param file
+ * @param optLangs
+ * @returns
  */
 export async function readCache(
   file: TFile,
