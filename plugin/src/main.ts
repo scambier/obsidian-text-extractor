@@ -7,6 +7,7 @@ import {
   isInCache,
   removeFromCache,
 } from 'obsidian-text-extract'
+import { createNote } from './utils'
 
 export type TextExtractorApi = {
   extractText: (file: TFile) => Promise<string>
@@ -55,14 +56,10 @@ export default class TextExtractorPlugin extends Plugin {
                 .setTitle('Extract Text into a new note')
                 .setIcon('document')
                 .onClick(async () => {
-                  let text = await extractTextWithSettings(file)
-                  text = `${text}\n\n![[${file.path}]]`
+                  let contents = await extractTextWithSettings(file)
+                  contents = `${contents}\n\n![[${file.path}]]`
                   // Create a new note and open it
-                  const newFile = await app.vault.create(
-                    file.basename + '.md',
-                    text
-                  )
-                  await app.workspace.openLinkText(newFile.basename, '', true)
+                  await createNote(file.basename, contents)
                 })
             })
 
