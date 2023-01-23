@@ -24,6 +24,14 @@ class OCRWorker {
     return worker
   }
 
+  /**
+   * Forcefully terminate all workers and clear the pool
+   */
+  static clearWorkers() {
+    OCRWorker.#pool.forEach(w => w.worker.terminate())
+    OCRWorker.#pool = []
+  }
+
   static #destroyWorker(ocrWorker: OCRWorker) {
     ocrWorker.worker.terminate()
     OCRWorker.#pool = OCRWorker.#pool.filter(w => w !== ocrWorker)
@@ -132,3 +140,7 @@ class OCRManager {
 }
 
 export const ocrManager = new OCRManager()
+
+export function clearOCRWorkers() {
+  OCRWorker.clearWorkers()
+}

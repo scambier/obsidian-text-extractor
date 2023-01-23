@@ -1,5 +1,5 @@
 import { pdfManager } from './pdf-manager'
-import { ocrManager } from './ocr-manager'
+import { clearOCRWorkers, ocrManager } from './ocr-manager'
 import { ocrLangs } from './ocr-langs'
 import type { TFile } from 'obsidian'
 import type { OcrOptions } from './types'
@@ -82,4 +82,5 @@ export {
   isInCache,
   removeFromCache,
   getCacheBasePath,
+  clearOCRWorkers,
 }
