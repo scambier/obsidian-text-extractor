@@ -15,7 +15,13 @@ export function getCachePath(file: TFile): {
 } {
   const slug = file.path.replace(/\//g, '-')
   const hash = makeMD5(file.path)
-  const subFolder = file.basename.slice(0, 2).toLowerCase()
+  let subFolder = file.basename.slice(0, 2).toLowerCase().replace(/\//g, '_')
+
+  // OneDrive issue
+  // https://github.com/scambier/obsidian-text-extractor/issues/12
+  if (subFolder.length < 2) {
+    subFolder += '_'
+  }
   const folder = `${getCacheBasePath()}/${subFolder}`
   const filename = `${slug}-${hash}.json`
   return {
