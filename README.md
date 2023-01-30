@@ -8,7 +8,9 @@
 
 ---
 
-**Text Extractor** is a "companion" plugin. It's mainly useful when used in conjunction with other plugins (like [Omnisearch](https://github.com/scambier/obsidian-omnisearch)), but you can also use it to quickly extract texts from **images & PDFs**.
+**Text Extractor** is a "companion" plugin. It's mainly useful when used in conjunction with other plugins (
+like [Omnisearch](https://github.com/scambier/obsidian-omnisearch)), but you can also use it to quickly extract texts
+from **images & PDFs**.
 
 ![](https://raw.githubusercontent.com/scambier/obsidian-text-extractor/master/images/context_menu.png)
 
@@ -17,27 +19,42 @@ Supported files:
 - Images (`.png`, `.jpg`, `.jpeg`)
 - PDFs (`.pdf`)
 
-### Cache & Sync
-
-The plugin caches the extracted texts as local small `.json` files inside the plugin directory. Those files can be synced between your devices. Since text extraction does not work on mobile, the plugin will use the synced cached texts if available. If not, an empty string will be returned.
-
 ### Limitations
 
-The plugin currently uses [Tesseract.js](https://tesseract.projectnaptha.com/) and [pdf-extract](https://github.com/jrmuizel/pdf-extract) to extract texts from images and PDFs. Those libraries are not perfect, and may not work on some files.
+- The plugin currently uses [Tesseract.js](https://tesseract.projectnaptha.com/)
+and [pdf-extract](https://github.com/jrmuizel/pdf-extract) to extract texts from images and PDFs. Those libraries are
+not perfect, and may not work on some files.
+- **🟥 Text Extraction does not work on mobile 🟥**. Read the following section for more details.
+
+### Cache & Sync
+
+The plugin caches the extracted texts as local small `.json` files inside the plugin directory. Those files can be
+synced between your devices. Since text extraction does not work on mobile, the plugin will use the synced cached texts
+if available. If not, an empty string will be returned.
+
+
+
 
 ## Installation
 
-Text Extractor is available on the [Obsidian community plugins repository](https://obsidian.md/plugins?search=Text%20Extractor). You can also install it manually by downloading the latest release from the [releases page](https://github.com/scambier/obsidian-text-extractor/releases) or by using the [BRAT plugin manager](https://github.com/TfTHacker/obsidian42-brat).
+Text Extractor is available on
+the [Obsidian community plugins repository](https://obsidian.md/plugins?search=Text%20Extractor). You can also install
+it manually by downloading the latest release from
+the [releases page](https://github.com/scambier/obsidian-text-extractor/releases) or by using
+the [BRAT plugin manager](https://github.com/TfTHacker/obsidian42-brat).
 
 ## Why?
 
 Text extraction is a useful feature, but it is not easy to implement, and consumes a lot of resources.
 
-**With this plugin, I hope to provide a unified way to extract texts from images & PDFs, and make it available to other plugins.** This way, other plugins can use it without having to worry about the implementation details, and without having to needlessly consume resources.
+**With this plugin, I hope to provide a unified way to extract texts from images & PDFs, and make it available to other
+plugins.** This way, other plugins can use it without having to worry about the implementation details, and without
+having to needlessly consume resources.
 
 ## ⚠️ Work in progress
 
-I'm [dogfooding](https://en.wikipedia.org/wiki/Eating_your_own_dog_food) this plugin with Omnisearch. The API functions likely won't change, but this is still a beta.
+I'm [dogfooding](https://en.wikipedia.org/wiki/Eating_your_own_dog_food) this plugin with Omnisearch. The API functions
+likely won't change, but this is still a beta.
 
 ## Using Text Extractor as a dependency for your plugin
 
@@ -60,15 +77,18 @@ export function getTextExtractor(): TextExtractorApi | undefined {
 const text = await getTextExtractor()?.extractText(file)
 ```
 
-Note that Text Extractor only extract texts _on demand_, when you call `extractText()` on a file, to avoid unnecessary resource consumption. Subsequent calls to `extractText()` will return the cached text.
+Note that Text Extractor only extract texts _on demand_, when you call `extractText()` on a file, to avoid unnecessary
+resource consumption. Subsequent calls to `extractText()` will return the cached text.
 
 ## Development
 
-While this plugin is first developped for Omnisearch, it's totally agnostic and I'd like it to become a community effort. If you wish to submit a PR, please open an issue first so we can discuss the feature.
+While this plugin is first developped for Omnisearch, it's totally agnostic and I'd like it to become a community
+effort. If you wish to submit a PR, please open an issue first so we can discuss the feature.
 
 The plugin is split in two parts:
 
 - The text extraction library, which does the actual work
 - The plugin itself, which is a wrapper around the library and exposes some useful options to the user
 
-Each project is in its own folder, and has its own `package.json` and `node_modules`. The library uses Rollup (easier to setup with Wasm and web workers), while the plugin uses esbuild.
+Each project is in its own folder, and has its own `package.json` and `node_modules`. The library uses Rollup (easier to
+setup with Wasm and web workers), while the plugin uses esbuild.
