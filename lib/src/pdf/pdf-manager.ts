@@ -1,11 +1,18 @@
 import { Platform, TFile } from 'obsidian'
 import WebWorker from 'web-worker:./pdf-worker.ts'
-import { processQueue, workerTimeout } from './globals'
-import { getCachePath, readCache, writeCache } from './cache'
+import {
+  CANT_EXTRACT_ON_MOBILE,
+  FAILED_TO_EXTRACT,
+  processQueue,
+  workerTimeout,
+} from '../globals'
+import { getCachePath, readCache, writeCache } from '../cache'
 
 class PDFWorker {
   static #pool: PDFWorker[] = []
   #running = false
+
+  private constructor(private worker: Worker) {}
 
   static getWorker(): PDFWorker {
     const free = PDFWorker.#pool.find(w => !w.#running)
@@ -22,9 +29,6 @@ class PDFWorker {
     pdfWorker.worker.terminate()
     PDFWorker.#pool = PDFWorker.#pool.filter(w => w !== pdfWorker)
   }
-
-
-  private constructor(private worker: Worker) {}
 
   public async run(msg: { data: Uint8Array; name: string }): Promise<any> {
     return new Promise((resolve, reject) => {
@@ -63,11 +67,11 @@ class PDFManager {
     // Get the text from the cache if it exists
     const cache = await readCache(file)
     if (cache) {
-      return cache.text
+      return cache.text ?? FAILED_TO_EXTRACT
     }
 
     if (Platform.isMobile) {
-      return ''
+      return CANT_EXTRACT_ON_MOBILE
     }
 
     // The PDF is not cached, extract it

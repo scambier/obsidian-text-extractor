@@ -1,13 +1,20 @@
 import { Platform, TFile } from 'obsidian'
 import Tesseract, { createWorker } from 'tesseract.js'
-import { getCachePath, readCache, writeCache } from './cache'
-import { processQueue, workerTimeout } from './globals'
-import type { OcrOptions } from './types'
+import { getCachePath, readCache, writeCache } from '../cache'
+import {
+  CANT_EXTRACT_ON_MOBILE,
+  FAILED_TO_EXTRACT,
+  processQueue,
+  workerTimeout,
+} from '../globals'
+import type { OcrOptions } from '../types'
 
 class OCRWorker {
   static #pool: OCRWorker[] = []
   #running = false
   #ready = false
+
+  private constructor(private worker: Tesseract.Worker) {}
 
   static getWorker(): OCRWorker {
     const free = OCRWorker.#pool.find(w => !w.#running && w.#ready)
@@ -36,8 +43,6 @@ class OCRWorker {
     ocrWorker.worker.terminate()
     OCRWorker.#pool = OCRWorker.#pool.filter(w => w !== ocrWorker)
   }
-
-  private constructor(private worker: Tesseract.Worker) {}
 
   public async run(msg: {
     imageData: Buffer
@@ -100,11 +105,11 @@ class OCRManager {
     // Get the text from the cache if it exists
     const cache = await readCache(file, optLangs)
     if (cache) {
-      return cache.text
+      return cache.text ?? FAILED_TO_EXTRACT
     }
 
     if (Platform.isMobile) {
-      return ''
+      return CANT_EXTRACT_ON_MOBILE
     }
 
     // The text is not cached, extract it

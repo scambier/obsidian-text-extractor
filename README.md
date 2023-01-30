@@ -12,6 +12,11 @@
 
 ![](https://raw.githubusercontent.com/scambier/obsidian-text-extractor/master/images/context_menu.png)
 
+Supported files:
+
+- Images (`.png`, `.jpg`, `.jpeg`)
+- PDFs (`.pdf`)
+
 ### Cache & Sync
 
 The plugin caches the extracted texts as local small `.json` files inside the plugin directory. Those files can be synced between your devices. Since text extraction does not work on mobile, the plugin will use the synced cached texts if available. If not, an empty string will be returned.

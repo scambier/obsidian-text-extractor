@@ -29,7 +29,7 @@ export async function createNote(name: string, contents = ''): Promise<void> {
       path += ` ${i}`
     }
 
-    // Create &nd open the file
+    // Create and open the file
     await app.vault.create(`${path}.md`, contents)
     await app.workspace.openLinkText(path, '')
   } catch (e) {

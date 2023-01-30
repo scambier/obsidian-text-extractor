@@ -1,4 +1,4 @@
-import type { ocrLangs } from "./ocr-langs"
+import type { ocrLangs } from './ocr/ocr-langs'
 
 export type ExtractedText = {
   path: string

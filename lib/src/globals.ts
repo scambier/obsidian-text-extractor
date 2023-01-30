@@ -17,3 +17,6 @@ console.info(
 export const workerTimeout = 120_000
 
 export const processQueue = new PQueue({ concurrency: backgroundProcesses, timeout: workerTimeout + 100 })
+
+export const FAILED_TO_EXTRACT = '[Failed to extract text]'
+export const CANT_EXTRACT_ON_MOBILE = '[Cannot extract text on mobile]'

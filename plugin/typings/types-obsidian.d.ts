@@ -1,4 +1,4 @@
-import type { Vault } from 'obsidian'
+import type {} from 'obsidian'
 
 declare module 'obsidian' {
   interface App {
