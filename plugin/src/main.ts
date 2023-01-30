@@ -31,54 +31,66 @@ export default class TextExtractorPlugin extends Plugin {
     this.registerEvent(
       app.workspace.on('file-menu', (menu, file, _source) => {
         if (file instanceof TFile && canFileBeExtracted(file.path)) {
-          menu.addItem((item: MenuItem) => {
-            item.setTitle('Text Extractor')
-            const submenu = item.setSubmenu()
+          if (Platform.isDesktopApp) {
+            menu.addItem((item: MenuItem) => {
+              item.setTitle('Text Extractor')
+              const submenu = item.setSubmenu()
 
-            // Copy to clipboard
-            if (Platform.isDesktopApp) {
+              // Copy to clipboard
               const { clipboard } = require('electron')
               submenu.addItem(item => {
                 item
                   .setTitle('Extract Text to clipboard')
                   .setIcon('clipboard-copy')
                   .onClick(async () => {
-                    let text = await extractTextWithSettings(file)
+                    let text = await extractTextWithNotice(file)
                     await clipboard.writeText(text)
                     new Notice('Text Extractor - Text copied to clipboard')
                   })
               })
-            }
 
-            // Create new note
-            submenu.addItem(item => {
+              // Create new note
+              submenu.addItem(item => {
+                item
+                  .setTitle('Extract text into a new note')
+                  .setIcon('document')
+                  .onClick(async () => {
+                    let contents = await extractTextWithNotice(file)
+                    contents = `${contents}\n\n![[${file.path}]]`
+                    // Create a new note and open it
+                    await createNote(file.basename, contents)
+                  })
+              })
+
+              // Locate cache file
+              if (Platform.isDesktopApp) {
+                submenu.addSeparator()
+                submenu.addItem(item => {
+                  item
+                    .setTitle('Clear cache for this file')
+                    .setIcon('trash')
+                    .onClick(async () => {
+                      await removeFromCache(file)
+                      new Notice(
+                        `Text Extractor - Removed ${file.path} from cache`
+                      )
+                    })
+                })
+              }
+            })
+          } else {
+            menu.addItem(item => {
               item
-                .setTitle('Extract Text into a new note')
+                .setTitle('Extract text into a new note')
                 .setIcon('document')
                 .onClick(async () => {
-                  let contents = await extractTextWithSettings(file)
+                  let contents = await extractTextWithNotice(file)
                   contents = `${contents}\n\n![[${file.path}]]`
                   // Create a new note and open it
                   await createNote(file.basename, contents)
                 })
             })
-
-            // Locate cache file
-            if (Platform.isDesktopApp) {
-              submenu.addSeparator()
-              submenu.addItem(item => {
-                item
-                  .setTitle('Clear cache for this file')
-                  .setIcon('trash')
-                  .onClick(async () => {
-                    await removeFromCache(file)
-                    new Notice(
-                      `Text Extractor - Removed ${file.path} from cache`
-                    )
-                  })
-              })
-            }
-          })
+          }
         }
       })
     )
@@ -89,12 +101,17 @@ export default class TextExtractorPlugin extends Plugin {
   }
 }
 
-async function extractTextWithSettings(file: TFile) {
+async function extractTextWithNotice(file: TFile) {
   if (!(await isInCache(file))) {
     new Notice(
       `Text Extractor - Extracting text from file ${file.path}, please wait...`
     )
   }
-  const langs = settings.ocrLanguages
-  return await extractText(file, { langs })
+  try {
+    const langs = settings.ocrLanguages
+    return await extractText(file, { langs })
+  } catch (e) {
+    new Notice(`Text Extractor - Error extracting text from file ${file.path}`)
+    throw e
+  }
 }
