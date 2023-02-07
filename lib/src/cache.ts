@@ -1,7 +1,7 @@
 import type { TFile } from 'obsidian'
 import { libVersion } from './globals'
 import type { ExtractedText } from './types'
-import { makeMD5 } from './utils'
+import { makeMD5, slugify } from './utils'
 import { isInCache } from './index'
 
 export function getCacheBasePath(): string {
@@ -13,9 +13,9 @@ export function getCachePath(file: TFile): {
   folder: string
   fullpath: string
 } {
-  const slug = file.path.replace(/\//g, '-')
+  const slug = slugify(file.path)
   const hash = makeMD5(file.path)
-  let subFolder = file.basename.slice(0, 2).toLowerCase().replace(/\//g, '_')
+  let subFolder = slugify(file.basename).slice(0, 2)
 
   // OneDrive issue
   // https://github.com/scambier/obsidian-text-extractor/issues/12
