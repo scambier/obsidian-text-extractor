@@ -82,7 +82,7 @@ resource consumption. Subsequent calls to `extractText()` will return the cached
 
 ## Development
 
-While this plugin is first developped for Omnisearch, it's totally agnostic and I'd like it to become a community
+While this plugin is first developed for Omnisearch, it's totally agnostic and I'd like it to become a community
 effort. If you wish to submit a PR, please open an issue first so we can discuss the feature.
 
 The plugin is split in two parts:
