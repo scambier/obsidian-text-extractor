@@ -5,18 +5,32 @@ import PQueue from 'p-queue'
 export const libVersion = data.version
 
 const cpuCount = Platform.isMobileApp ? 1 : require('os').cpus().length
-let backgroundProcesses = Math.max(1, Math.floor(cpuCount * 0.7))
-if (backgroundProcesses == cpuCount) {
-  backgroundProcesses = 1
+
+const ocrBackgroundProcesses = cpuCount == 2 ? 1 : 2
+
+let PdfBackgroundProcess = Math.max(
+  1,
+  Math.floor(cpuCount * 0.7) - ocrBackgroundProcesses
+)
+if (PdfBackgroundProcess == cpuCount) {
+  PdfBackgroundProcess = 1
 }
 
 console.info(
-  `Text Extractor - Number of available workers: ${backgroundProcesses}`,
+  `Text Extractor - Number of available workers: ${PdfBackgroundProcess} for PDFs, ${ocrBackgroundProcesses} for OCR`
 )
 
 export const workerTimeout = 120_000
 
-export const processQueue = new PQueue({ concurrency: backgroundProcesses, timeout: workerTimeout + 100 })
+export const pdfProcessQueue = new PQueue({
+  concurrency: PdfBackgroundProcess,
+  timeout: workerTimeout + 100,
+})
+
+export const imagesProcessQueue = new PQueue({
+  concurrency: ocrBackgroundProcesses,
+  timeout: workerTimeout + 100,
+})
 
 export const FAILED_TO_EXTRACT = '[Failed to extract text]'
 export const CANT_EXTRACT_ON_MOBILE = '[Cannot extract text on mobile]'

@@ -3,7 +3,7 @@ import { clearOCRWorkers, ocrManager } from './ocr/ocr-manager'
 import { ocrLangs } from './ocr/ocr-langs'
 import type { TFile } from 'obsidian'
 import type { OcrOptions } from './types'
-import { processQueue } from './globals'
+import { pdfProcessQueue } from './globals'
 import { getCacheBasePath, getCachePath } from './cache'
 
 /**
@@ -59,7 +59,7 @@ function getOcrLangs(): typeof ocrLangs {
  * This stops any pending text extraction.
  */
 function clearProcessQueue() {
-  processQueue.clear()
+  pdfProcessQueue.clear()
 }
 
 function isInCache(file: TFile): Promise<boolean> {

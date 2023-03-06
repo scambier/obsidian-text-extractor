@@ -3,7 +3,7 @@ import WebWorker from 'web-worker:./pdf-worker.ts'
 import {
   CANT_EXTRACT_ON_MOBILE,
   FAILED_TO_EXTRACT,
-  processQueue,
+  pdfProcessQueue,
   workerTimeout,
 } from '../globals'
 import { getCachePath, readCache, writeCache } from '../cache'
@@ -53,7 +53,7 @@ class PDFWorker {
 class PDFManager {
   public async getPdfText(file: TFile): Promise<string> {
     try {
-      return processQueue.add(() => this.#getPdfText(file))
+      return pdfProcessQueue.add(() => this.#getPdfText(file))
     } catch (e) {
       console.warn(
         `Text Extractor - Error while extracting text from ${file.basename}`

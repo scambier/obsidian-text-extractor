@@ -4,7 +4,7 @@ import { getCachePath, readCache, writeCache } from '../cache'
 import {
   CANT_EXTRACT_ON_MOBILE,
   FAILED_TO_EXTRACT,
-  processQueue,
+  imagesProcessQueue,
   workerTimeout,
 } from '../globals'
 import type { OcrOptions } from '../types'
@@ -90,7 +90,7 @@ class OCRManager {
    */
   public async getImageText(file: TFile, options: OcrOptions): Promise<string> {
     try {
-      return processQueue.add(() => this.#getImageText(file, options))
+      return imagesProcessQueue.add(() => this.#getImageText(file, options))
     } catch (e) {
       console.warn(
         `Text Extractor - Error while extracting text from ${file.basename}`
