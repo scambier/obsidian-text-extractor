@@ -8,6 +8,16 @@
 
 ---
 
+## ⭐ Looking for contributors ⭐
+
+I unfortunately can't dedicate much time anymore on Text Extractor, but here are many things that still need to be done: extraction of Excel and Word files, PDF improvements, quality of life features, etc.
+
+You're more than welcome to submit PRs :)
+
+Note: I'll continue to support this project with bugfixes, dependencies updates, and maybe quick features.
+
+---
+
 **Text Extractor** is a "companion" plugin. It's mainly useful when used in conjunction with other plugins (like [Omnisearch](https://github.com/scambier/obsidian-omnisearch)), but you can also use it to quickly extract texts from **images & PDFs**.
 
 ![](https://raw.githubusercontent.com/scambier/obsidian-text-extractor/master/images/context_menu.png)
