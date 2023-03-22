@@ -30,6 +30,7 @@ Supported files:
 ### Limitations
 
 - The plugin currently uses [Tesseract.js](https://tesseract.projectnaptha.com/) and [pdf-extract](https://github.com/jrmuizel/pdf-extract) to extract texts from images and PDFs. Those libraries are not perfect, and may not work on some files.
+- **🟥 PDF files often fail to get their text extracted 🟥**. See [#7](https://github.com/scambier/obsidian-text-extractor/issues/7) and [#21](https://github.com/scambier/obsidian-text-extractor/discussions/21)
 - **🟥 Text Extraction does not work on mobile 🟥**. Read the following section for more details.
 
 ### Cache & Sync
