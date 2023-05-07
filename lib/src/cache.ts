@@ -13,7 +13,6 @@ export function getCachePath(file: TFile): {
   folder: string
   fullpath: string
 } {
-  const slug = slugify(file.path)
   const hash = makeMD5(file.path)
   let subFolder = slugify(file.basename).slice(0, 2)
 
@@ -23,7 +22,7 @@ export function getCachePath(file: TFile): {
     subFolder += '_'
   }
   const folder = `${getCacheBasePath()}/${subFolder}`
-  const filename = `${slug}-${hash}.json`
+  const filename = `${hash}.json`
   return {
     folder,
     filename,
