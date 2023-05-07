@@ -67,8 +67,8 @@ export async function writeCache(
     text,
     libVersion,
     langs,
-    hash: '',
-    size: 0,
+    // hash: '',
+    // size: 0,
   }
   await app.vault.adapter.mkdir(folder)
   return await app.vault.adapter.write(path, JSON.stringify(data))
