@@ -27,6 +27,7 @@ export default class TextExtractorPlugin extends Plugin {
 
   async onload() {
     await loadSettings(this)
+    await TextExtract.convertOldCachePaths()
     this.addSettingTab(new TextExtractorSettingsTab(this))
     this.registerEvent(
       app.workspace.on('file-menu', (menu, file, _source) => {

@@ -2,10 +2,26 @@ import type { TFile } from 'obsidian'
 import { libVersion } from './globals'
 import type { ExtractedText } from './types'
 import { makeMD5, slugify } from './utils'
-import { isInCache } from './index'
 
 export function getCacheBasePath(): string {
   return `${app.vault.configDir}/plugins/text-extractor/cache`
+}
+
+export async function convertOldCachePaths(): Promise<void> {
+  // Convert old cache files to new format
+  // Recursively list all files in the cache folder
+  const cachePath = getCacheBasePath()
+  const paths = await app.vault.adapter.list(cachePath)
+  for (const dir of paths.folders) {
+    const files = await app.vault.adapter.list(dir)
+    for (const file of files.files) {
+      const hash = file.split('-').pop()?.split('.').shift()
+      if (hash) {
+        const newPath = `${cachePath}/${hash}.json`
+        await app.vault.adapter.rename(file, newPath)
+      }
+    }
+  }
 }
 
 export function getCachePath(file: TFile): {
@@ -13,7 +29,6 @@ export function getCachePath(file: TFile): {
   folder: string
   fullpath: string
 } {
-  const slug = slugify(file.path)
   const hash = makeMD5(file.path)
   let subFolder = slugify(file.basename).slice(0, 2)
 
@@ -23,7 +38,7 @@ export function getCachePath(file: TFile): {
     subFolder += '_'
   }
   const folder = `${getCacheBasePath()}/${subFolder}`
-  const filename = `${slug}-${hash}.json`
+  const filename = `${hash}.json`
   return {
     folder,
     filename,
@@ -67,8 +82,8 @@ export async function writeCache(
     text,
     libVersion,
     langs,
-    hash: '',
-    size: 0,
+    // hash: '',
+    // size: 0,
   }
   await app.vault.adapter.mkdir(folder)
   return await app.vault.adapter.write(path, JSON.stringify(data))
