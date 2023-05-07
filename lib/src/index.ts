@@ -4,7 +4,7 @@ import { ocrLangs } from './ocr/ocr-langs'
 import type { TFile } from 'obsidian'
 import type { OcrOptions } from './types'
 import { pdfProcessQueue } from './globals'
-import { getCacheBasePath, getCachePath } from './cache'
+import { convertOldCachePaths, getCacheBasePath, getCachePath } from './cache'
 
 /**
  * Returns a promise that resolves to the text extracted from the file.
@@ -62,7 +62,7 @@ function clearProcessQueue() {
   pdfProcessQueue.clear()
 }
 
-function isInCache(file: TFile): Promise<boolean> {
+async function isInCache(file: TFile): Promise<boolean> {
   const path = getCachePath(file)
   return app.vault.adapter.exists(path.fullpath)
 }
@@ -83,4 +83,5 @@ export {
   removeFromCache,
   getCacheBasePath,
   clearOCRWorkers,
+  convertOldCachePaths,
 }
