@@ -11,16 +11,20 @@ export async function convertOldCachePaths(): Promise<void> {
   // Convert old cache files to new format
   // Recursively list all files in the cache folder
   const cachePath = getCacheBasePath()
-  const paths = await app.vault.adapter.list(cachePath)
-  for (const dir of paths.folders) {
-    const files = await app.vault.adapter.list(dir)
-    for (const file of files.files) {
-      const hash = file.split('-').pop()?.split('.').shift()
-      if (hash) {
-        const newPath = `${cachePath}/${hash}.json`
-        await app.vault.adapter.rename(file, newPath)
+  try {
+    const paths = await app.vault.adapter.list(cachePath)
+    for (const dir of paths.folders) {
+      const files = await app.vault.adapter.list(dir)
+      for (const file of files.files) {
+        const hash = file.split('-').pop()?.split('.').shift()
+        if (hash) {
+          const newPath = `${cachePath}/${hash}.json`
+          await app.vault.adapter.rename(file, newPath)
+        }
       }
     }
+  } catch (e) {
+    // No old paths to convert
   }
 }
 
