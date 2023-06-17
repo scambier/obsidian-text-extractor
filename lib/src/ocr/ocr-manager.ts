@@ -8,6 +8,18 @@ import {
   workerTimeout,
 } from '../globals'
 import type { OcrOptions } from '../types'
+import type { ocrLangs } from './ocr-langs'
+
+/**
+ * Concatenates an array of langs to a single string to be passed to Tesseract
+ * e.g. ['fra', 'eng'] => 'eng+fra'
+ * The langs are sorted alphabetically because it's also used a cache key
+ * @param langs 
+ * @returns 
+ */
+function concatLangs (langs: Array<typeof ocrLangs[number]>): string {
+  return langs.sort().join('+')
+}
 
 class OCRWorker {
   static #pool: OCRWorker[] = []
@@ -51,12 +63,12 @@ class OCRWorker {
   }): Promise<{ text: string; langs: string }> {
     return new Promise(async (resolve, reject) => {
       this.#running = true
-      const langs = msg.options.langs.join('+')
+      const langs = concatLangs(msg.options.langs)
 
       if (!this.#ready) {
         await this.worker.load()
         await this.worker.loadLanguage(langs)
-        await this.worker.initialize(msg.options.langs[0])
+        await this.worker.initialize(langs)
         this.#ready = true
       }
 
@@ -101,9 +113,9 @@ class OCRManager {
   }
 
   async #getImageText(file: TFile, options: OcrOptions): Promise<string> {
-    const optLangs = options.langs.sort().join('+')
+    const langs = concatLangs(options.langs)
     // Get the text from the cache if it exists
-    const cache = await readCache(file, optLangs)
+    const cache = await readCache(file, langs)
     if (cache) {
       return cache.text ?? FAILED_TO_EXTRACT
     }
@@ -132,12 +144,12 @@ class OCRManager {
           .trim()
 
         // Add it to the cache
-        await writeCache(cachePath.folder, cachePath.filename, text, optLangs)
+        await writeCache(cachePath.folder, cachePath.filename, text, langs)
         resolve(text)
       } catch (e) {
         // In case of error (unreadable PDF or timeout) just add
         // an empty string to the cache
-        await writeCache(cachePath.folder, cachePath.filename, '', optLangs)
+        await writeCache(cachePath.folder, cachePath.filename, '', langs)
         resolve('')
       }
     })
