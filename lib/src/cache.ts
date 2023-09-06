@@ -1,7 +1,7 @@
 import type { TFile } from 'obsidian'
 import { libVersion } from './globals'
 import type { ExtractedText } from './types'
-import { makeMD5, slugify } from './utils'
+import { makeMD5 } from './utils'
 
 export function getCacheBasePath(): string {
   return `${app.vault.configDir}/plugins/text-extractor/cache`
