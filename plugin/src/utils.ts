@@ -5,7 +5,7 @@ export async function createNote(name: string, contents = ''): Promise<void> {
     let pathPrefix: string
     switch (app.vault.getConfig('newFileLocation')) {
       case 'current':
-        pathPrefix = app.workspace.getActiveFile()?.parent.path ?? ''
+        pathPrefix = app.workspace.getActiveFile()?.parent?.path ?? ''
         break
       case 'folder':
         pathPrefix = app.vault.getConfig('newFileFolderPath') as string

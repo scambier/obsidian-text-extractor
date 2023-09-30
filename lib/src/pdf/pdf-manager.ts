@@ -53,7 +53,7 @@ class PDFWorker {
 class PDFManager {
   public async getPdfText(file: TFile): Promise<string> {
     try {
-      return pdfProcessQueue.add(() => this.#getPdfText(file))
+      return await pdfProcessQueue.add(() => this.#getPdfText(file)) ?? ''
     } catch (e) {
       console.warn(
         `Text Extractor - Error while extracting text from ${file.basename}`
