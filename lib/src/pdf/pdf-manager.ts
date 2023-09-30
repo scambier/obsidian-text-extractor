@@ -90,12 +90,12 @@ class PDFManager {
           .trim()
 
         // Add it to the cache
-        await writeCache(cachePath.folder, cachePath.filename, text)
+        await writeCache(cachePath.folder, cachePath.filename, text, file.path, '')
         resolve(text)
       } catch (e) {
         // In case of error (unreadable PDF or timeout) just add
         // an empty string to the cache
-        await writeCache(cachePath.folder, cachePath.filename, '')
+        await writeCache(cachePath.folder, cachePath.filename, '', file.path, '')
         resolve('')
       }
     })

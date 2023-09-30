@@ -144,12 +144,12 @@ class OCRManager {
           .trim()
 
         // Add it to the cache
-        await writeCache(cachePath.folder, cachePath.filename, text, langs)
+        await writeCache(cachePath.folder, cachePath.filename, text, file.path, langs)
         resolve(text)
       } catch (e) {
         // In case of error (unreadable PDF or timeout) just add
         // an empty string to the cache
-        await writeCache(cachePath.folder, cachePath.filename, '', langs)
+        await writeCache(cachePath.folder, cachePath.filename, '', file.path, langs)
         resolve('')
       }
     })

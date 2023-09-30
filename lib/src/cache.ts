@@ -68,20 +68,28 @@ export async function readCache(
   return null
 }
 
+/**
+ *
+ * @param folder Cache folder
+ * @param filename Cache filename
+ * @param text Extracted text
+ * @param ogPath Filepath of the extracted file
+ * @param langs Extracted languages
+ * @returns
+ */
 export async function writeCache(
   folder: string,
   filename: string,
   text: string,
-  langs = ''
+  ogPath: string,
+  langs: string
 ): Promise<void> {
   const path = `${folder}/${filename}`
   const data: ExtractedText = {
-    path,
+    path: ogPath,
     text,
     libVersion,
     langs,
-    // hash: '',
-    // size: 0,
   }
   await app.vault.adapter.mkdir(folder)
   return await app.vault.adapter.write(path, JSON.stringify(data))
