@@ -102,7 +102,7 @@ class OCRManager {
    */
   public async getImageText(file: TFile, options: OcrOptions): Promise<string> {
     try {
-      return imagesProcessQueue.add(() => this.#getImageText(file, options))
+      return await imagesProcessQueue.add(() => this.#getImageText(file, options)) ?? ''
     } catch (e) {
       console.warn(
         `Text Extractor - Error while extracting text from ${file.basename}`
