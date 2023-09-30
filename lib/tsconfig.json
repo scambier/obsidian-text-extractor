@@ -1,5 +1,4 @@
 {
-  "extends": "@tsconfig/svelte/tsconfig.json",
   "compilerOptions": {
     "declaration": true,
     "declarationDir": "./dist",
@@ -13,6 +12,7 @@
     "module": "ESNext",
     "target": "ES2021",
     "allowJs": true,
+    "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "noImplicitAny": true,
     "moduleResolution": "node",
