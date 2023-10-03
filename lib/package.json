@@ -45,6 +45,7 @@
   "dependencies": {
     "@apollo/utils.createhash": "^3.0.0",
     "p-queue": "^7.4.1",
+    "pure-md5": "^0.1.14",
     "tesseract.js": "^3.0.3"
   }
 }

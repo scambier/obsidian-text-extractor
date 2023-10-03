@@ -1,7 +1,8 @@
-import { createHash } from '@apollo/utils.createhash'
+import { type BinaryLike } from 'crypto'
+import { md5 } from 'pure-md5'
 
-export function makeMD5(data: string): string {
-  return createHash('md5').update(data).digest('hex')
+export function makeMD5(data: BinaryLike): string {
+  return md5(data.toString())
 }
 
 export function slugify(str: string): string {

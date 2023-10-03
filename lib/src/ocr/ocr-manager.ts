@@ -120,7 +120,7 @@ class OCRManager {
       return cache.text ?? FAILED_TO_EXTRACT
     }
 
-    if (Platform.isMobile) {
+    if (Platform.isMobile || !Buffer) {
       return CANT_EXTRACT_ON_MOBILE
     }
 

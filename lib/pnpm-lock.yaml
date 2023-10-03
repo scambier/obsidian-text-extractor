@@ -11,6 +11,9 @@ dependencies:
   p-queue:
     specifier: ^7.4.1
     version: 7.4.1
+  pure-md5:
+    specifier: ^0.1.14
+    version: 0.1.14
   tesseract.js:
     specifier: ^3.0.3
     version: 3.0.3(eslint@8.50.0)
@@ -3142,6 +3145,10 @@ packages:
   /punycode@2.3.0:
     resolution: {integrity: sha512-rRV+zQD8tVFys26lAGR9WUuS4iUAngJScM+ZRSKtvl5tKeZ2t5bvdNFdNHBW9FWR4guGHlgmsZ1G7BSm2wTbuA==}
     engines: {node: '>=6'}
+
+  /pure-md5@0.1.14:
+    resolution: {integrity: sha512-tQ/inCmpbggbJRgJESzyhAj8weRANMMgYvBtVcqDHfTXR88fgU/Ff7YQHm8dGrcenCxkjas10SmbaFROcp2kZQ==}
+    dev: false
 
   /querystringify@2.2.0:
     resolution: {integrity: sha512-FIqgj2EUvTa7R50u0rGsyTftzjYmv/a3hO345bZNrqabNqjtgiDMgmo4mkUjd+nzU5oF3dClKqFIPUKybUyqoQ==}
