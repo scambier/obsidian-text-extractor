@@ -34,7 +34,8 @@ function isFilePDF(path: string): boolean {
 
 function isFileImage(path: string): boolean {
   return (
-    path.endsWith('.png') || path.endsWith('.jpg') || path.endsWith('.jpeg')
+    path.endsWith('.png') || path.endsWith('.jpg') || path.endsWith('.jpeg') ||
+    path.endsWith('.webp') || path.endsWith('.gif') || path.endsWith('.bmp')
   )
 }
 
