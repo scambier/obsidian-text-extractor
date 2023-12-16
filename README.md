@@ -24,7 +24,7 @@ You're more than welcome to submit PRs, and I will gladly help and mentor :)
 
 Supported files:
 
-- Images (`.png`, `.jpg`, `.jpeg`)
+- Images (`.png`, `.jpg`, `.jpeg`, `.webp`, `.gif`, `.bmp`)
 - PDFs (`.pdf`)
 
 ### Limitations
