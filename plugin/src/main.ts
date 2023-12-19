@@ -131,20 +131,20 @@ async function extractTextWithNotice(file: TFile) {
   }
 }
 
-export async function extractToClipboard(file: TFile) {
+async function extractToClipboard(file: TFile) {
   const { clipboard } = require('electron')
   let text = await extractTextWithNotice(file)
   await clipboard.writeText(text)
   new Notice('Text Extractor - Text copied to clipboard')
 }
 
-export async function extractToNewNote(file: TFile) {
+async function extractToNewNote(file: TFile) {
   let contents = await extractTextWithNotice(file)
   contents = `${contents}\n\n![[${file.path}]]`
   // Create a new note and open it
   await createNote(file.basename, contents)
 }
 
-export function getActiveFile(app: App): TFile | null {
+function getActiveFile(app: App): TFile | null {
   return app.workspace.activeEditor?.file ?? app.workspace.getActiveFile();
 }
