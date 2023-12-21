@@ -1,4 +1,4 @@
-import { MenuItem, Notice, Platform, Plugin, TFile } from 'obsidian'
+import { MenuItem, Notice, Platform, Plugin, TFile, App } from 'obsidian'
 import { loadSettings, settings, TextExtractorSettingsTab } from './settings'
 import * as TextExtract from 'obsidian-text-extract'
 import {
@@ -29,6 +29,29 @@ export default class TextExtractorPlugin extends Plugin {
     await loadSettings(this)
     await TextExtract.convertOldCachePaths()
     this.addSettingTab(new TextExtractorSettingsTab(this))
+
+    this.addCommand({
+      id: "extract-to-clipboard",
+      name: "Extract text to clipboard",
+      callback: () => {
+        const file = getActiveFile(this.app)
+        if (file != null && canFileBeExtracted(file.path)) {
+          extractToClipboard(file);
+        }
+      },
+    });
+
+    this.addCommand({
+      id: "extract-to-new-note",
+      name: "Extract text into a new note",
+      callback: () => {
+        const file = getActiveFile(this.app)
+        if (file != null && canFileBeExtracted(file.path)) {
+          extractToNewNote(file);
+        }
+      },
+    });
+
     this.registerEvent(
       app.workspace.on('file-menu', (menu, file, _source) => {
         if (file instanceof TFile && canFileBeExtracted(file.path)) {
@@ -38,15 +61,12 @@ export default class TextExtractorPlugin extends Plugin {
               const submenu = item.setSubmenu()
 
               // Copy to clipboard
-              const { clipboard } = require('electron')
               submenu.addItem(item => {
                 item
                   .setTitle('Extract Text to clipboard')
                   .setIcon('clipboard-copy')
                   .onClick(async () => {
-                    let text = await extractTextWithNotice(file)
-                    await clipboard.writeText(text)
-                    new Notice('Text Extractor - Text copied to clipboard')
+                    extractToClipboard(file)
                   })
               })
 
@@ -56,10 +76,7 @@ export default class TextExtractorPlugin extends Plugin {
                   .setTitle('Extract text into a new note')
                   .setIcon('document')
                   .onClick(async () => {
-                    let contents = await extractTextWithNotice(file)
-                    contents = `${contents}\n\n![[${file.path}]]`
-                    // Create a new note and open it
-                    await createNote(file.basename, contents)
+                    extractToNewNote(file)
                   })
               })
 
@@ -85,10 +102,7 @@ export default class TextExtractorPlugin extends Plugin {
                 .setTitle('Extract text into a new note')
                 .setIcon('document')
                 .onClick(async () => {
-                  let contents = await extractTextWithNotice(file)
-                  contents = `${contents}\n\n![[${file.path}]]`
-                  // Create a new note and open it
-                  await createNote(file.basename, contents)
+                  extractToNewNote(file)
                 })
             })
           }
@@ -115,4 +129,22 @@ async function extractTextWithNotice(file: TFile) {
     new Notice(`Text Extractor - Error extracting text from file ${file.path}`)
     throw e
   }
+}
+
+async function extractToClipboard(file: TFile) {
+  const { clipboard } = require('electron')
+  let text = await extractTextWithNotice(file)
+  await clipboard.writeText(text)
+  new Notice('Text Extractor - Text copied to clipboard')
+}
+
+async function extractToNewNote(file: TFile) {
+  let contents = await extractTextWithNotice(file)
+  contents = `${contents}\n\n![[${file.path}]]`
+  // Create a new note and open it
+  await createNote(file.basename, contents)
+}
+
+function getActiveFile(app: App): TFile | null {
+  return app.workspace.activeEditor?.file ?? app.workspace.getActiveFile();
 }
