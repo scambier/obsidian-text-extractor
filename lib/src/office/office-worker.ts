@@ -4,9 +4,9 @@ import { utils as sheetUtils, read as xlsxRead } from 'xlsx'
 onmessage = async evt => {
   try {
     let text = ''
-    if (evt.data.extension == 'docx') {
+    if (evt.data.extension === 'docx') {
       text = await extractWordText(evt.data.data)
-    } else if (evt.data.extension == 'xlsx') {
+    } else if (evt.data.extension === 'xlsx') {
       text = await extractExcelText(evt.data.data)
     }
     self.postMessage({ text })
