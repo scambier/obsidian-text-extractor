@@ -48,6 +48,7 @@
     "mammoth": "^1.6.0",
     "p-queue": "^7.4.1",
     "pure-md5": "^0.1.14",
-    "tesseract.js": "^3.0.3"
+    "tesseract.js": "^3.0.3",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.1/xlsx-0.20.1.tgz"
   }
 }
