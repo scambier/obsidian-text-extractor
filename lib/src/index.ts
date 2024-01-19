@@ -44,7 +44,7 @@ function isFileImage(path: string): boolean {
 
 function isFileOffice(path: string): boolean {
   return (
-    path.endsWith('.docx') || path.endsWith('xlsx')
+    path.endsWith('.docx') || path.endsWith('.xlsx')
   )
 }
 
