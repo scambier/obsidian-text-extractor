@@ -26,6 +26,7 @@ Supported files:
 
 - Images (`.png`, `.jpg`, `.jpeg`, `.webp`, `.gif`, `.bmp`)
 - PDFs (`.pdf`)
+- Office documents (`.docx`, `.xlsx`)
 
 ### Limitations
 
