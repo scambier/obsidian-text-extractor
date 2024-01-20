@@ -1,4 +1,5 @@
 import { pdfManager } from './pdf/pdf-manager'
+import { officeManager } from './office/office-manager'
 import { clearOCRWorkers, ocrManager } from './ocr/ocr-manager'
 import { ocrLangs } from './ocr/ocr-langs'
 import type { TFile } from 'obsidian'
@@ -24,6 +25,8 @@ function extractText(
     return pdfManager.getPdfText(file)
   } else if (isFileImage(file.path)) {
     return ocrManager.getImageText(file, opts)
+  } else if (isFileOffice(file.path)) {
+    return officeManager.getOfficeText(file)
   }
   throw new Error('File type not supported')
 }
@@ -39,13 +42,19 @@ function isFileImage(path: string): boolean {
   )
 }
 
+function isFileOffice(path: string): boolean {
+  return (
+    path.endsWith('.docx') || path.endsWith('.xlsx')
+  )
+}
+
 /**
  * Returns true if the filepath is a supported file type.
  * @param filePath
  * @returns
  */
 function canFileBeExtracted(filePath: string): boolean {
-  return isFilePDF(filePath) || isFileImage(filePath)
+  return isFilePDF(filePath) || isFileImage(filePath) || isFileOffice(filePath)
 }
 
 /**

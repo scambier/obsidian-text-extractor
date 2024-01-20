@@ -8,16 +8,18 @@ const cpuCount = Platform.isMobileApp ? 1 : require('os').cpus().length
 
 const ocrBackgroundProcesses = cpuCount == 2 ? 1 : 2
 
+const officeBackgroundProcesses = 1
+
 let PdfBackgroundProcess = Math.max(
   1,
-  Math.floor(cpuCount * 0.7) - ocrBackgroundProcesses
+  Math.floor(cpuCount * 0.7) - ocrBackgroundProcesses - officeBackgroundProcesses
 )
 if (PdfBackgroundProcess == cpuCount) {
   PdfBackgroundProcess = 1
 }
 
 console.info(
-  `Text Extractor - Number of available workers: ${PdfBackgroundProcess} for PDFs, ${ocrBackgroundProcesses} for OCR`
+  `Text Extractor - Number of available workers: ${PdfBackgroundProcess} for PDFs, ${ocrBackgroundProcesses} for OCR, ${officeBackgroundProcesses} for Office`
 )
 
 export const workerTimeout = 120_000
@@ -29,6 +31,11 @@ export const pdfProcessQueue = new PQueue({
 
 export const imagesProcessQueue = new PQueue({
   concurrency: ocrBackgroundProcesses,
+  timeout: workerTimeout + 100,
+})
+
+export const officeProcessQueue = new PQueue({
+  concurrency: officeBackgroundProcesses,
   timeout: workerTimeout + 100,
 })
 

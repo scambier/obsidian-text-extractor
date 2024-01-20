@@ -37,6 +37,7 @@
     "rollup-plugin-base64": "^1.0.1",
     "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-delete": "^2.0.0",
+    "rollup-plugin-polyfill-node": "^0.13.0",
     "rollup-plugin-typescript2": "^0.34.1",
     "rollup-plugin-web-worker-loader": "^1.6.1",
     "tslib": "2.3.1",
@@ -44,8 +45,10 @@
   },
   "dependencies": {
     "@apollo/utils.createhash": "^3.0.0",
+    "mammoth": "^1.6.0",
     "p-queue": "^7.4.1",
     "pure-md5": "^0.1.14",
-    "tesseract.js": "^3.0.3"
+    "tesseract.js": "^3.0.3",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.1/xlsx-0.20.1.tgz"
   }
 }
