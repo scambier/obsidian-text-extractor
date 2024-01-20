@@ -1,6 +1,6 @@
 {
   "name": "obsidian-text-extract",
-  "version": "0.2.4",
+  "version": "0.3.0",
   "type": "module",
   "private": true,
   "description": "The core library for Obsidian Text Extractor plugin",
