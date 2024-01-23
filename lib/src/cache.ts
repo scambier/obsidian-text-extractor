@@ -50,20 +50,13 @@ export function getCachePath(file: TFile): {
  * @param optLangs
  * @returns
  */
-export async function readCache(
-  file: TFile,
-  optLangs = ''
-): Promise<ExtractedText | null> {
+export async function readCache(file: TFile): Promise<ExtractedText | null> {
   const cachePath = getCachePath(file)
 
   // Get the text from the cache if it exists
   if (await app.vault.adapter.exists(cachePath.fullpath)) {
     const raw = await app.vault.adapter.read(cachePath.fullpath)
-    const cache = JSON.parse(raw) as ExtractedText
-    // Check that the languages list has not changed since the cache was created
-    if (cache.langs === optLangs) {
-      return cache
-    }
+    return JSON.parse(raw) as ExtractedText
   }
   return null
 }

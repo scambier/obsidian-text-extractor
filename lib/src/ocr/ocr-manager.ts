@@ -14,10 +14,10 @@ import type { ocrLangs } from './ocr-langs'
  * Concatenates an array of langs to a single string to be passed to Tesseract
  * e.g. ['fra', 'eng'] => 'eng+fra'
  * The langs are sorted alphabetically because it's also used a cache key
- * @param langs 
- * @returns 
+ * @param langs
+ * @returns
  */
-function concatLangs (langs: Array<typeof ocrLangs[number]>): string {
+function concatLangs(langs: Array<(typeof ocrLangs)[number]>): string {
   return langs.sort().join('+')
 }
 
@@ -102,7 +102,11 @@ class OCRManager {
    */
   public async getImageText(file: TFile, options: OcrOptions): Promise<string> {
     try {
-      return await imagesProcessQueue.add(() => this.#getImageText(file, options)) ?? ''
+      return (
+        (await imagesProcessQueue.add(() =>
+          this.#getImageText(file, options)
+        )) ?? ''
+      )
     } catch (e) {
       console.warn(
         `Text Extractor - Error while extracting text from ${file.basename}`
@@ -113,9 +117,8 @@ class OCRManager {
   }
 
   async #getImageText(file: TFile, options: OcrOptions): Promise<string> {
-    const langs = concatLangs(options.langs)
     // Get the text from the cache if it exists
-    const cache = await readCache(file, langs)
+    const cache = await readCache(file)
     if (cache) {
       return cache.text ?? FAILED_TO_EXTRACT
     }
@@ -128,6 +131,7 @@ class OCRManager {
     const cachePath = getCachePath(file)
     const data = new Uint8ClampedArray(await app.vault.readBinary(file))
     const worker = OCRWorker.getWorker()
+    const langs = concatLangs(options.langs)
 
     return new Promise(async (resolve, reject) => {
       try {
@@ -144,12 +148,24 @@ class OCRManager {
           .trim()
 
         // Add it to the cache
-        await writeCache(cachePath.folder, cachePath.filename, text, file.path, langs)
+        await writeCache(
+          cachePath.folder,
+          cachePath.filename,
+          text,
+          file.path,
+          langs
+        )
         resolve(text)
       } catch (e) {
         // In case of error (unreadable PDF or timeout) just add
         // an empty string to the cache
-        await writeCache(cachePath.folder, cachePath.filename, '', file.path, langs)
+        await writeCache(
+          cachePath.folder,
+          cachePath.filename,
+          '',
+          file.path,
+          langs
+        )
         resolve('')
       }
     })
