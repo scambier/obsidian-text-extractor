@@ -12,7 +12,7 @@ class PDFWorker {
   static #pool: PDFWorker[] = []
   #running = false
 
-  private constructor(private worker: Worker) {}
+  private constructor(private worker: Worker) { }
 
   static getWorker(): PDFWorker {
     const free = PDFWorker.#pool.find(w => !w.#running)
@@ -30,17 +30,17 @@ class PDFWorker {
     PDFWorker.#pool = PDFWorker.#pool.filter(w => w !== pdfWorker)
   }
 
-  public async run(msg: { data: Uint8Array; name: string }): Promise<any> {
+  public async run(file: { path: string; name: string }): Promise<any> {
     return new Promise((resolve, reject) => {
       this.#running = true
 
       const timeout = setTimeout(() => {
-        console.warn('Text Extractor - PDF Worker timeout for ', msg.name)
+        console.warn('Text Extractor - PDF Worker timeout for ', file.name)
         reject('timeout')
         PDFWorker.#destroyWorker(this)
       }, workerTimeout)
 
-      this.worker.postMessage(msg)
+      this.worker.postMessage(file.path)
       this.worker.onmessage = evt => {
         clearTimeout(timeout)
         resolve(evt)
@@ -76,12 +76,11 @@ class PDFManager {
 
     // The PDF is not cached, extract it
     const cachePath = getCachePath(file)
-    const data = new Uint8Array(await app.vault.readBinary(file))
     const worker = PDFWorker.getWorker()
 
     return new Promise(async (resolve, reject) => {
       try {
-        const res = await worker.run({ data, name: file.basename })
+        const res = await worker.run({ path: file.path, name: file.basename })
         const text = (res.data.text as string)
           // Replace \n with spaces
           .replace(/\n/g, ' ')
