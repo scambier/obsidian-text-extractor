@@ -10,13 +10,8 @@ const ocrBackgroundProcesses = cpuCount == 2 ? 1 : 2
 
 const officeBackgroundProcesses = 1
 
-let PdfBackgroundProcess = Math.max(
-  1,
-  Math.floor(cpuCount * 0.7) - ocrBackgroundProcesses - officeBackgroundProcesses
-)
-if (PdfBackgroundProcess == cpuCount) {
-  PdfBackgroundProcess = 1
-}
+// PDF.js crashes with an out-of-memory error if too many workers are used
+const PdfBackgroundProcess = 1
 
 console.info(
   `Text Extractor - Number of available workers: ${PdfBackgroundProcess} for PDFs, ${ocrBackgroundProcesses} for OCR, ${officeBackgroundProcesses} for Office`
