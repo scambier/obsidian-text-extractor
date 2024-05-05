@@ -93,8 +93,9 @@ class PDFManager {
         // Add it to the cache
         await writeCache(cachePath.folder, cachePath.filename, text, file.path, '')
         // Add a delay to prevent out-of-memory crash (hopefully garbage collection will run more often)
-        await new Promise(resolve => setTimeout(resolve, 10000));
-        resolve(text)
+        setTimeout(() => {
+          resolve(text)
+        }, 10000)
       } catch (e) {
         // In case of error (unreadable PDF or timeout) just add
         // an empty string to the cache
