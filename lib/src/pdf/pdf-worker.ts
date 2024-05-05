@@ -1,14 +1,13 @@
-import PDFJSStatic from 'pdfjs-dist';
-//import getDocument from 'pdfjs-dist';
+import { loadPdfJs } from 'obsidian'
 
-//import * as pdfjslib from 'pdfjs-dist';
-//let PDFPageProxy = pdfjslib.PDFJS;
-
-onmessage = async path => {
+onmessage = async evt => {
+  await loadPdfJs();
   try {
-    const pdf = await PDFJSStatic.getDocument(path).promise;
+    // @ts-ignore
+    const pdf: PDFDocumentProxy = await window.pdfjsLib.getDocument(evt.data.path).promise;
 
     const pagePromises = [];
+    // Get text from each page of the PDF
     for (let j = 1; j <= pdf.numPages; j++) {
       const page = pdf.getPage(j);
 
@@ -23,7 +22,7 @@ onmessage = async path => {
     const texts = await Promise.all(pagePromises);
     self.postMessage({ text: texts.join('') });
   } catch (e) {
-    console.info('Text Extractor - Could not extract text from ' + path)
+    console.info('Text Extractor - Could not extract text from ' + evt.data.path)
     self.postMessage({ text: '' })
   }
 }
