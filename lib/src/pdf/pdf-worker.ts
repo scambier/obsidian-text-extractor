@@ -4,16 +4,19 @@ onmessage = async evt => {
   await loadPdfJs();
   try {
     // @ts-ignore
-    const pdf: PDFDocumentProxy = await window.pdfjsLib.getDocument(evt.data.path).promise;
+    const pdf = await window.pdfjsLib.getDocument(evt.data.path).promise;
 
     const pagePromises = [];
     // Get text from each page of the PDF
     for (let j = 1; j <= pdf.numPages; j++) {
       const page = pdf.getPage(j);
 
+      // @ts-ignore
       pagePromises.push(page.then((page) => {
-        const textContent = page.getTextContent();
-        return textContent.then((text) => {
+        // @ts-ignore
+        const textContentPromise: Promise<{ items }> = page.getTextContent();
+        return textContentPromise.then((text) => {
+          // @ts-ignore
           return text.items.map((s) => s).join('');
         });
       }));
