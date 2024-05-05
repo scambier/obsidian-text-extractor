@@ -4,7 +4,7 @@ onmessage = async evt => {
   await loadPdfJs();
   try {
     // @ts-ignore
-    const pdf = await window.pdfjsLib.getDocument(evt.data.path).promise;
+    const pdf = await window.pdfjsLib.getDocument(evt.data.data).promise;
 
     const pagePromises = [];
     // Get text from each page of the PDF
@@ -25,7 +25,7 @@ onmessage = async evt => {
     const texts = await Promise.all(pagePromises);
     self.postMessage({ text: texts.join('') });
   } catch (e) {
-    console.info('Text Extractor - Could not extract text from ' + evt.data.path)
+    console.info('Text Extractor - Could not extract text from ' + evt.data.name)
     self.postMessage({ text: '' })
   }
 }

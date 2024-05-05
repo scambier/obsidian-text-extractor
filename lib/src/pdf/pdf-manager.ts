@@ -30,18 +30,20 @@ class PDFWorker {
     PDFWorker.#pool = PDFWorker.#pool.filter(w => w !== pdfWorker)
   }
 
-  public async run(file: { path: string; name: string }): Promise<any> {
+  public async run(msg: { data: string; name: string }): Promise<any> {
+    console.log("Running PDFWorker for " + msg.name)
     return new Promise((resolve, reject) => {
       this.#running = true
 
       const timeout = setTimeout(() => {
-        console.warn('Text Extractor - PDF Worker timeout for ', file.name)
+        console.warn('Text Extractor - PDF Worker timeout for ', msg.name)
         reject('timeout')
         PDFWorker.#destroyWorker(this)
       }, workerTimeout)
 
-      this.worker.postMessage(file.path)
+      this.worker.postMessage(msg)
       this.worker.onmessage = evt => {
+        console.log("PDFWorker finished for " + msg.name)
         clearTimeout(timeout)
         resolve(evt)
         this.#running = false
@@ -80,7 +82,7 @@ class PDFManager {
 
     return new Promise(async (resolve, reject) => {
       try {
-        const res = await worker.run({ path: file.path, name: file.basename })
+        const res = await worker.run({ data: file.path, name: file.basename })
         const text = (res.data.text as string)
           // Replace \n with spaces
           .replace(/\n/g, ' ')
@@ -90,6 +92,8 @@ class PDFManager {
 
         // Add it to the cache
         await writeCache(cachePath.folder, cachePath.filename, text, file.path, '')
+        // Add a delay to prevent out-of-memory crash (hopefully garbage collection will run more often)
+        await new Promise(resolve => setTimeout(resolve, 10000));
         resolve(text)
       } catch (e) {
         // In case of error (unreadable PDF or timeout) just add
