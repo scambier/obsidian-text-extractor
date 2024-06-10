@@ -133,7 +133,7 @@ async function extractTextWithNotice(file: TFile) {
 
 async function extractToClipboard(file: TFile) {
   const { clipboard } = require('electron')
-  let text = await extractTextWithNotice(file)
+  const text = await extractTextWithNotice(file)
   await clipboard.writeText(text)
   new Notice('Text Extractor - Text copied to clipboard')
 }

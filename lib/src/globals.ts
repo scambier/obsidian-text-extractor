@@ -6,7 +6,7 @@ export const libVersion = data.version
 
 const cpuCount = Platform.isMobileApp ? 1 : require('os').cpus().length
 
-const ocrBackgroundProcesses = cpuCount == 2 ? 1 : 2
+const ocrBackgroundProcesses = cpuCount <= 2 ? 1 : 2
 
 const officeBackgroundProcesses = 1
 
