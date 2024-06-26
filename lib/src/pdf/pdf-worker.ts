@@ -1,14 +1,29 @@
-import rustPlugin from '../../pkg/obsidian_text_extract_bg.wasm'
-import * as plugin from '../../pkg'
-
-const decodedPlugin = decodeBase64(rustPlugin as any)
+import { loadPdfJs } from 'obsidian'
 
 onmessage = async evt => {
-  const buffer = Uint8Array.from(decodedPlugin, c => c.charCodeAt(0))
-  await plugin.default(Promise.resolve(buffer))
+  await loadPdfJs();
   try {
-    const text = plugin.extract_pdf_text(evt.data.data as Uint8Array)
-    self.postMessage({ text })
+    // @ts-ignore
+    const pdf = await window.pdfjsLib.getDocument(evt.data.data).promise;
+
+    const pagePromises = [];
+    // Get text from each page of the PDF
+    for (let j = 1; j <= pdf.numPages; j++) {
+      const page = pdf.getPage(j);
+
+      // @ts-ignore
+      pagePromises.push(page.then((page) => {
+        // @ts-ignore
+        const textContentPromise: Promise<{ items }> = page.getTextContent();
+        return textContentPromise.then((text) => {
+          // @ts-ignore
+          return text.items.map((s) => s).join('');
+        });
+      }));
+    }
+
+    const texts = await Promise.all(pagePromises);
+    self.postMessage({ text: texts.join('') });
   } catch (e) {
     console.info('Text Extractor - Could not extract text from ' + evt.data.name)
     self.postMessage({ text: '' })
@@ -19,3 +34,4 @@ function decodeBase64(data: string) {
   return atob(data)
   // return Buffer.from(data, 'base64').toString()
 }
+

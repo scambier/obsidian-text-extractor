@@ -12,7 +12,7 @@ class PDFWorker {
   static #pool: PDFWorker[] = []
   #running = false
 
-  private constructor(private worker: Worker) {}
+  private constructor(private worker: Worker) { }
 
   static getWorker(): PDFWorker {
     const free = PDFWorker.#pool.find(w => !w.#running)
@@ -30,7 +30,8 @@ class PDFWorker {
     PDFWorker.#pool = PDFWorker.#pool.filter(w => w !== pdfWorker)
   }
 
-  public async run(msg: { data: Uint8Array; name: string }): Promise<any> {
+  public async run(msg: { data: string; name: string }): Promise<any> {
+    console.log("Running PDFWorker for " + msg.name)
     return new Promise((resolve, reject) => {
       this.#running = true
 
@@ -42,6 +43,7 @@ class PDFWorker {
 
       this.worker.postMessage(msg)
       this.worker.onmessage = evt => {
+        console.log("PDFWorker finished for " + msg.name)
         clearTimeout(timeout)
         resolve(evt)
         this.#running = false
@@ -76,12 +78,11 @@ class PDFManager {
 
     // The PDF is not cached, extract it
     const cachePath = getCachePath(file)
-    const data = new Uint8Array(await app.vault.readBinary(file))
     const worker = PDFWorker.getWorker()
 
     return new Promise(async (resolve, reject) => {
       try {
-        const res = await worker.run({ data, name: file.basename })
+        const res = await worker.run({ data: file.path, name: file.basename })
         const text = (res.data.text as string)
           // Replace \n with spaces
           .replace(/\n/g, ' ')
@@ -91,7 +92,10 @@ class PDFManager {
 
         // Add it to the cache
         await writeCache(cachePath.folder, cachePath.filename, text, file.path, '')
-        resolve(text)
+        // Add a delay to prevent out-of-memory crash (hopefully garbage collection will run more often)
+        setTimeout(() => {
+          resolve(text)
+        }, 10000)
       } catch (e) {
         // In case of error (unreadable PDF or timeout) just add
         // an empty string to the cache
