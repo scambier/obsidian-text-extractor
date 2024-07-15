@@ -9,8 +9,8 @@ Text extraction does not work on mobile; calling the functions will just immedia
 You'll need [Rust], [wasm-pack], and [pnpm].
 
 ```sh
-pnpm i
-pnpm build
+$ pnpm i
+$ pnpm build
 ```
 
 Rust is quite slow to compile, so the first build will take some time.
@@ -20,13 +20,13 @@ Rust is quite slow to compile, so the first build will take some time.
 Unit tests use the fast [Vitest] library, and sit alongside code in the format `<name>.test.ts`. Run them continuously with:
 
 ```sh
-pnpm test
+$ pnpm test
 ```
 
 Test coverage can be shown with:
 
 ```sh
-pnpm coverage
+$ pnpm coverage
 ```
 
 [pnpm]: https://pnpm.io/installation
