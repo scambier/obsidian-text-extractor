@@ -1,6 +1,6 @@
 {
   "name": "obsidian-text-extract",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "type": "module",
   "private": true,
   "description": "The core library for Obsidian Text Extractor plugin",
@@ -12,7 +12,8 @@
   "scripts": {
     "dev": "rollup -c -w",
     "build": "rollup -c",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest",
+    "coverage": "vitest run --coverage",
     "prepublishOnly": "pnpm run build"
   },
   "keywords": [],
@@ -26,8 +27,9 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@tsconfig/svelte": "^3.0.0",
     "@types/jest": "^27.5.2",
-    "@types/node": "^16.18.73",
+    "@types/node": "^20.14.10",
     "@types/pako": "^2.0.3",
+    "@vitest/coverage-v8": "^2.0.2",
     "babel-jest": "^27.5.1",
     "builtin-modules": "^3.3.0",
     "jest": "^27.5.1",
@@ -41,7 +43,8 @@
     "rollup-plugin-typescript2": "^0.34.1",
     "rollup-plugin-web-worker-loader": "^1.6.1",
     "tslib": "2.3.1",
-    "typescript": "^4.9.5"
+    "typescript": "^4.9.5",
+    "vitest": "^2.0.2"
   },
   "dependencies": {
     "@apollo/utils.createhash": "^3.0.0",
