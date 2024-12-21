@@ -64,6 +64,10 @@ class PDFManager {
     // Add it to the cache
     const text = texts.join(' ');
     await writeCache(cachePath.folder, cachePath.filename, text, file.path, '')
+    console.info(`Text Extractor - Extracted text from ${file.basename}. ${pdfProcessQueue.size} PDF extract jobs still queued.`)
+    // Add a pause to allow garbage collection to run more often
+    //await new Promise((resolve) => setTimeout(resolve, 5000))
+
     return text
   }
 }
