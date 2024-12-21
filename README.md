@@ -39,9 +39,6 @@ Supported files:
 
 The plugin caches the extracted texts as local small `.json` files inside the plugin directory. Those files can be synced between your devices. Since text extraction does not work on mobile, the plugin will use the synced cached texts if available. If not, an empty string will be returned.
 
-
-
-
 ## Installation
 
 Text Extractor is available on the [Obsidian community plugins repository](https://obsidian.md/plugins?search=Text%20Extractor). You can also install it manually by downloading the latest release from the [releases page](https://github.com/scambier/obsidian-text-extractor/releases) or by using the [BRAT plugin manager](https://github.com/TfTHacker/obsidian42-brat).
@@ -83,9 +80,26 @@ Note that Text Extractor only extract texts _on demand_, when you call `extractT
 
 While this plugin is first developed for Omnisearch, it's totally agnostic and I'd like it to become a community effort. If you wish to submit a PR, please open an issue first so we can discuss the feature.
 
+Learn the basics of Obsidian plugin development at https://docs.obsidian.md/Plugins/Getting+started/Build+a+plugin
+
 The plugin is split in two parts:
 
 - The text extraction library, which does the actual work
 - The plugin itself, which is a wrapper around the library and exposes some useful options to the user
 
 Each project is in its own folder, and has its own `package.json` and `node_modules`. The library uses Rollup (easier to setup with Wasm and web workers), while the plugin uses esbuild.
+
+```
+obsidian_vault_path=<path_to_your_obsidian_vault>
+plugin_path="${obsidian_vault_path}/.obsidian/plugins/text-extractor"
+cd lib
+pnpm install
+pnpm run build
+cd ../plugin
+pnpm install
+pnpm run build
+cd ..
+mkdir -p $plugin_path
+cp manifest.json $plugin_path
+cp plugin/dist/* $plugin_path
+```
