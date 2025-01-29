@@ -10,7 +10,7 @@
 
 ## ⭐ Looking for contributors ⭐
 
-I unfortunately can't dedicate much time anymore on Text Extractor, but there are many things that still need to be done: extraction of Excel and Word files, PDF improvements, quality of life features, etc.
+I unfortunately can't dedicate much time anymore on Text Extractor. It's mostly feature-complete, but there are many improvements and quality of life features that could be implemented.
 
 You're more than welcome to submit PRs, and I will gladly help and mentor :)
 
