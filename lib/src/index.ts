@@ -19,7 +19,11 @@ function extractText(
   file: TFile,
   options: Partial<OcrOptions>
 ): Promise<string> {
-  const opts = Object.assign({}, { langs: ['eng'] }, options)
+  const opts = Object.assign(
+    {},
+    { langs: ['eng'], useSystemOCR: false },
+    options
+  )
 
   if (isFilePDF(file.path)) {
     return pdfManager.getPdfText(file)

@@ -19,7 +19,8 @@ export default class TextExtractorPlugin extends Plugin {
   public api: TextExtractorApi = {
     async extractText(file: TFile): Promise<string> {
       const langs = settings.ocrLanguages
-      return await TextExtract.extractText(file, { langs })
+      const useSystemOCR = settings.useSystemOCR
+      return await TextExtract.extractText(file, { langs, useSystemOCR })
     },
     canFileBeExtracted: TextExtract.canFileBeExtracted,
     isInCache: TextExtract.isInCache,
@@ -124,7 +125,8 @@ async function extractTextWithNotice(file: TFile) {
   }
   try {
     const langs = settings.ocrLanguages
-    return await extractText(file, { langs })
+    const useSystemOCR = settings.useSystemOCR
+    return await extractText(file, { langs, useSystemOCR })
   } catch (e) {
     new Notice(`Text Extractor - Error extracting text from file ${file.path}`)
     throw e

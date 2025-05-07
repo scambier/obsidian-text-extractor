@@ -1,6 +1,6 @@
 import TextExtractorPlugin from './main'
 import { writable } from 'svelte/store'
-import { Notice, PluginSettingTab, Setting } from 'obsidian'
+import { Notice, Platform, PluginSettingTab, Setting } from 'obsidian'
 import LangSelector from './components/LangSelector.svelte'
 import {
   getOcrLangs,
@@ -11,6 +11,7 @@ import {
 interface TextExtractorSettings {
   ocrLanguages: ReturnType<typeof getOcrLangs>[number][]
   rightClickMenu: boolean
+  useSystemOCR: boolean
 }
 
 export class TextExtractorSettingsTab extends PluginSettingTab {
@@ -32,6 +33,24 @@ export class TextExtractorSettingsTab extends PluginSettingTab {
     containerEl.empty()
 
     containerEl.createEl('h2', { text: 'Text Extractor - Settings' })
+
+    // use system OCR
+    if (Platform.isDesktopApp && Platform.isMacOS) {
+      new Setting(containerEl)
+        .setName('Use system OCR')
+        .setDesc(
+          'If enabled, Text Extractor will use the system OCR instead of Tesseract. The OCR language will be detected automatically.'
+        )
+        .addToggle(toggle => {
+          toggle.setValue(settings.useSystemOCR).onChange(async v => {
+            settings.useSystemOCR = v
+            if (v) {
+              clearOCRWorkers()
+            }
+            await saveSettings(this.plugin)
+          })
+        })
+    }
 
     // Language selector
 
@@ -88,6 +107,7 @@ export class TextExtractorSettingsTab extends PluginSettingTab {
 const DEFAULT_SETTINGS: TextExtractorSettings = {
   ocrLanguages: ['eng'],
   rightClickMenu: true,
+  useSystemOCR: false,
 }
 
 export const selectedLanguages = writable(DEFAULT_SETTINGS.ocrLanguages)
