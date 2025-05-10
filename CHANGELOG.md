@@ -1,3 +1,8 @@
+## 0.6.0
+
+- Added support for MacOs OCR, by @ajihyf
+- Updated pdf-extract to 0.9.0
+
 ## 0.4.0
 
 - API ADDITION: `isInCache: (file: TFile) => Promise<boolean>`

@@ -1,5 +1,5 @@
 import { readFileSync, writeFileSync } from 'fs'
-import plugin from './plugin/package.json' assert { type: 'json' }
+import plugin from './plugin/package.json' with { type: 'json' }
 
 const targetVersion = plugin.version
 console.log(`Bumping version to ${targetVersion}`)
