@@ -9,6 +9,7 @@ import {
 } from '../globals'
 import type { OcrOptions } from '../types'
 import type { ocrLangs } from './ocr-langs'
+import { extractTextByMacOCR } from './ocr-mac'
 
 /**
  * Concatenates an array of langs to a single string to be passed to Tesseract
@@ -116,6 +117,24 @@ class OCRManager {
     }
   }
 
+  async #ocrByTesseract(file: TFile, options: OcrOptions): Promise<string> {
+    const data = new Uint8ClampedArray(await app.vault.readBinary(file))
+    const worker = OCRWorker.getWorker()
+
+    const res = await worker.run({
+      imageData: Buffer.from(data.buffer),
+      name: file.basename,
+      options,
+    })
+    const text = res.text
+      // Replace \n with spaces
+      .replace(/\n/g, ' ')
+      // Trim multiple spaces
+      .replace(/ +/g, ' ')
+      .trim()
+    return text
+  }
+
   async #getImageText(file: TFile, options: OcrOptions): Promise<string> {
     // Get the text from the cache if it exists
     const cache = await readCache(file)
@@ -129,23 +148,20 @@ class OCRManager {
 
     // The text is not cached, extract it
     const cachePath = getCachePath(file)
-    const data = new Uint8ClampedArray(await app.vault.readBinary(file))
-    const worker = OCRWorker.getWorker()
-    const langs = concatLangs(options.langs)
+
+    const useSystemOCR =
+      options.useSystemOCR && Platform.isDesktopApp && Platform.isMacOS
+
+    const langs = useSystemOCR ? '' : concatLangs(options.langs)
 
     return new Promise(async (resolve, reject) => {
       try {
-        const res = await worker.run({
-          imageData: Buffer.from(data.buffer),
-          name: file.basename,
-          options,
-        })
-        const text = res.text
-          // Replace \n with spaces
-          .replace(/\n/g, ' ')
-          // Trim multiple spaces
-          .replace(/ +/g, ' ')
-          .trim()
+        let text: string
+        if (useSystemOCR) {
+          text = await extractTextByMacOCR(file)
+        } else {
+          text = await this.#ocrByTesseract(file, options)
+        }
 
         // Add it to the cache
         await writeCache(

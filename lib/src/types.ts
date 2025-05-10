@@ -9,4 +9,7 @@ export type ExtractedText = {
   // size: number
 }
 
-export type OcrOptions = { langs: Array<typeof ocrLangs[number]> }
+export type OcrOptions = {
+  langs: Array<(typeof ocrLangs)[number]>
+  useSystemOCR: boolean
+}
