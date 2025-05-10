@@ -18,8 +18,6 @@ I unfortunately can't dedicate much time anymore on Text Extractor. It's mostly 
 
 You're more than welcome to submit PRs, and I will gladly help and mentor :)
 
-> Note: **Text Extractor is NOT abandoned!** This project provides important features to Omnisearch, and I'll continue to support it with bugfixes, dependencies updates, and maybe quick & small features.
-
 ---
 
 **Text Extractor** is a "companion" plugin. It's mainly useful when used in conjunction with other plugins (like [Omnisearch](https://github.com/scambier/obsidian-omnisearch)), but you can also use it to quickly extract texts from **images & PDFs**.
