@@ -4,7 +4,8 @@
     "declarationDir": "./dist",
     "types": [
       "node",
-      "jest"
+      "jest",
+      "obsidian"
     ],
     "strict": true,
     "noUncheckedIndexedAccess": false,
