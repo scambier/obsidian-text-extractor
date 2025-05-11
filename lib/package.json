@@ -33,7 +33,7 @@
     "babel-jest": "^27.5.1",
     "builtin-modules": "^3.3.0",
     "jest": "^27.5.1",
-    "obsidian": "latest",
+    "obsidian": "^1.4.11",
     "prettier": "^2.8.8",
     "rollup": "^2.79.1",
     "rollup-plugin-base64": "^1.0.1",

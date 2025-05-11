@@ -11,10 +11,11 @@
     "moduleResolution": "node",
     "importHelpers": true,
     "isolatedModules": true,
-	"strictNullChecks": true,
+	  "strictNullChecks": true,
     "types": [
       "svelte",
-      "node"
+      "node",
+      "obsidian"
     ],
     "lib": [
       "DOM",
