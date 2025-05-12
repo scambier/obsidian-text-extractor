@@ -1,7 +1,3 @@
-
-> [!IMPORTANT]  
-> The build is failing, and I don't want to waste anymore time trying to fix it, as I don't use this plugin at all. PRs are welcome.
-
 # Obsidian Text Extractor
 
 [![Sponsor me](https://img.shields.io/badge/%E2%9D%A4%20Like%20this%20plugin%3F-Sponsor%20me!-ff69b4)](https://github.com/sponsors/scambier)  
