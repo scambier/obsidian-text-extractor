@@ -1,7 +1,7 @@
 {
 	"id": "text-extractor",
 	"name": "Text Extractor",
-	"version": "0.6.0",
+	"version": "0.6.1",
 	"minAppVersion": "1.4.16",
 	"description": "A (companion) plugin to facilitate the extraction of text from images (OCR) and PDFs.",
 	"author": "Simon Cambier",
