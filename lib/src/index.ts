@@ -36,10 +36,11 @@ function extractText(
 }
 
 function isFilePDF(path: string): boolean {
-  return path.endsWith('.pdf')
+  return path.toLowerCase().endsWith('.pdf')
 }
 
 function isFileImage(path: string): boolean {
+  path = path.toLowerCase()
   return (
     path.endsWith('.png') || path.endsWith('.jpg') || path.endsWith('.jpeg') ||
     path.endsWith('.webp') || path.endsWith('.gif') || path.endsWith('.bmp')
@@ -47,6 +48,7 @@ function isFileImage(path: string): boolean {
 }
 
 function isFileOffice(path: string): boolean {
+  path = path.toLowerCase()
   return (
     path.endsWith('.docx') || path.endsWith('.xlsx')
   )
