@@ -68,6 +68,7 @@ export async function readCache(file: TFile): Promise<ExtractedText | null> {
  * @param text Extracted text
  * @param ogPath Filepath of the extracted file
  * @param langs Extracted languages
+ * @param extractionMethod Optional extraction method identifier (e.g., 'vlm-openai', 'yolo')
  * @returns
  */
 export async function writeCache(
@@ -75,7 +76,8 @@ export async function writeCache(
   filename: string,
   text: string,
   ogPath: string,
-  langs: string
+  langs: string,
+  extractionMethod?: string
 ): Promise<void> {
   const path = `${folder}/${filename}`
   const data: ExtractedText = {
@@ -83,6 +85,7 @@ export async function writeCache(
     text,
     libVersion,
     langs,
+    extractionMethod,
   }
   await app.vault.adapter.mkdir(folder)
   return await app.vault.adapter.write(path, JSON.stringify(data))

@@ -20,7 +20,21 @@ export default class TextExtractorPlugin extends Plugin {
     async extractText(file: TFile): Promise<string> {
       const langs = settings.ocrLanguages
       const useSystemOCR = settings.useSystemOCR
-      return await TextExtract.extractText(file, { langs, useSystemOCR })
+      const vlm = settings.useVLM ? {
+        enabled: true,
+        provider: settings.vlmProvider,
+        apiKey: settings.vlmApiKey,
+        model: settings.vlmModel || undefined,
+        prompt: settings.vlmPrompt || undefined,
+        maxTokens: settings.vlmMaxTokens,
+      } : undefined
+      const yolo = settings.useYOLO ? {
+        enabled: true,
+        modelUrl: settings.yoloModelUrl || undefined,
+        confidenceThreshold: settings.yoloConfidenceThreshold,
+        combineWithVLM: settings.yoloCombineWithVLM,
+      } : undefined
+      return await TextExtract.extractText(file, { langs, useSystemOCR, vlm, yolo })
     },
     canFileBeExtracted: TextExtract.canFileBeExtracted,
     isInCache: TextExtract.isInCache,
@@ -126,7 +140,21 @@ async function extractTextWithNotice(file: TFile) {
   try {
     const langs = settings.ocrLanguages
     const useSystemOCR = settings.useSystemOCR
-    return await extractText(file, { langs, useSystemOCR })
+    const vlm = settings.useVLM ? {
+      enabled: true,
+      provider: settings.vlmProvider,
+      apiKey: settings.vlmApiKey,
+      model: settings.vlmModel || undefined,
+      prompt: settings.vlmPrompt || undefined,
+      maxTokens: settings.vlmMaxTokens,
+    } : undefined
+    const yolo = settings.useYOLO ? {
+      enabled: true,
+      modelUrl: settings.yoloModelUrl || undefined,
+      confidenceThreshold: settings.yoloConfidenceThreshold,
+      combineWithVLM: settings.yoloCombineWithVLM,
+    } : undefined
+    return await extractText(file, { langs, useSystemOCR, vlm, yolo })
   } catch (e) {
     new Notice(`Text Extractor - Error extracting text from file ${file.path}`)
     throw e

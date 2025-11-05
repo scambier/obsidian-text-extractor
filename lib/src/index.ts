@@ -2,6 +2,8 @@ import { pdfManager } from './pdf/pdf-manager'
 import { officeManager } from './office/office-manager'
 import { clearOCRWorkers, ocrManager } from './ocr/ocr-manager'
 import { ocrLangs } from './ocr/ocr-langs'
+import { vlmManager } from './vlm/vlm-manager'
+import { yoloManager } from './yolo/yolo-manager'
 import type { TFile } from 'obsidian'
 import type { OcrOptions } from './types'
 import { pdfProcessQueue } from './globals'
@@ -28,7 +30,19 @@ function extractText(
   if (isFilePDF(file.path)) {
     return pdfManager.getPdfText(file)
   } else if (isFileImage(file.path)) {
-    return ocrManager.getImageText(file, opts)
+    // Priority order for image extraction:
+    // 1. YOLO (if enabled)
+    // 2. VLM (if enabled)
+    // 3. System OCR (if enabled on macOS)
+    // 4. Tesseract (default)
+
+    if (opts.yolo?.enabled) {
+      return yoloManager.getImageText(file, opts.yolo, opts.vlm)
+    } else if (opts.vlm?.enabled && opts.vlm.apiKey) {
+      return vlmManager.getImageText(file, opts.vlm)
+    } else {
+      return ocrManager.getImageText(file, opts)
+    }
   } else if (isFileOffice(file.path)) {
     return officeManager.getOfficeText(file)
   }
@@ -101,3 +115,9 @@ export {
   clearOCRWorkers,
   convertOldCachePaths,
 }
+
+// Export VLM and YOLO managers for advanced usage
+export { vlmManager } from './vlm/vlm-manager'
+export { yoloManager, COCO_CLASSES } from './yolo/yolo-manager'
+export type { Detection } from './yolo/yolo-manager'
+export type { VLMProvider, VLMOptions, YOLOOptions } from './types'

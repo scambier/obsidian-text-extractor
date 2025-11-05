@@ -7,11 +7,24 @@ import {
   getCacheBasePath,
   clearOCRWorkers,
 } from 'obsidian-text-extract'
+import type { VLMProvider } from 'obsidian-text-extract'
 
 interface TextExtractorSettings {
   ocrLanguages: ReturnType<typeof getOcrLangs>[number][]
   rightClickMenu: boolean
   useSystemOCR: boolean
+  // VLM settings
+  useVLM: boolean
+  vlmProvider: VLMProvider
+  vlmApiKey: string
+  vlmModel: string
+  vlmPrompt: string
+  vlmMaxTokens: number
+  // YOLO settings
+  useYOLO: boolean
+  yoloModelUrl: string
+  yoloConfidenceThreshold: number
+  yoloCombineWithVLM: boolean
 }
 
 export class TextExtractorSettingsTab extends PluginSettingTab {
@@ -51,6 +64,163 @@ export class TextExtractorSettingsTab extends PluginSettingTab {
           })
         })
     }
+
+    //#region VLM Settings
+    new Setting(containerEl).setName('Vision Language Models (VLM)').setHeading()
+
+    new Setting(containerEl)
+      .setName('Enable VLM')
+      .setDesc(
+        'Use Vision Language Models (OpenAI GPT-4 Vision, Claude, or Gemini) for text extraction. This provides better accuracy but requires an API key and internet connection.'
+      )
+      .addToggle(toggle => {
+        toggle.setValue(settings.useVLM).onChange(async v => {
+          settings.useVLM = v
+          await saveSettings(this.plugin)
+          this.display() // Refresh to show/hide VLM settings
+        })
+      })
+
+    if (settings.useVLM) {
+      new Setting(containerEl)
+        .setName('VLM Provider')
+        .setDesc('Choose your preferred Vision Language Model provider')
+        .addDropdown(dropdown => {
+          dropdown
+            .addOption('openai', 'OpenAI (GPT-4 Vision)')
+            .addOption('anthropic', 'Anthropic (Claude)')
+            .addOption('google', 'Google (Gemini)')
+            .setValue(settings.vlmProvider)
+            .onChange(async v => {
+              settings.vlmProvider = v as VLMProvider
+              await saveSettings(this.plugin)
+            })
+        })
+
+      new Setting(containerEl)
+        .setName('API Key')
+        .setDesc(`Enter your ${settings.vlmProvider} API key`)
+        .addText(text => {
+          text
+            .setPlaceholder('sk-...')
+            .setValue(settings.vlmApiKey)
+            .onChange(async v => {
+              settings.vlmApiKey = v
+              await saveSettings(this.plugin)
+            })
+          text.inputEl.type = 'password'
+        })
+
+      new Setting(containerEl)
+        .setName('Model (optional)')
+        .setDesc(
+          'Specify a model name. Leave empty to use the default model for the selected provider.'
+        )
+        .addText(text => {
+          text
+            .setPlaceholder('e.g., gpt-4o, claude-3-5-sonnet-20241022')
+            .setValue(settings.vlmModel)
+            .onChange(async v => {
+              settings.vlmModel = v
+              await saveSettings(this.plugin)
+            })
+        })
+
+      new Setting(containerEl)
+        .setName('Custom Prompt (optional)')
+        .setDesc(
+          'Customize the prompt sent to the VLM. Leave empty to use the default text extraction prompt.'
+        )
+        .addTextArea(text => {
+          text
+            .setPlaceholder('Extract all text from this image...')
+            .setValue(settings.vlmPrompt)
+            .onChange(async v => {
+              settings.vlmPrompt = v
+              await saveSettings(this.plugin)
+            })
+          text.inputEl.rows = 3
+        })
+
+      new Setting(containerEl)
+        .setName('Max Tokens')
+        .setDesc('Maximum number of tokens in the response')
+        .addText(text => {
+          text
+            .setPlaceholder('1000')
+            .setValue(settings.vlmMaxTokens.toString())
+            .onChange(async v => {
+              const num = parseInt(v)
+              if (!isNaN(num) && num > 0) {
+                settings.vlmMaxTokens = num
+                await saveSettings(this.plugin)
+              }
+            })
+        })
+    }
+    //#endregion VLM Settings
+
+    //#region YOLO Settings
+    new Setting(containerEl).setName('YOLO Object Detection').setHeading()
+
+    new Setting(containerEl)
+      .setName('Enable YOLO')
+      .setDesc(
+        'Use YOLO (You Only Look Once) for object detection in images. Runs locally in your browser using ONNX Runtime.'
+      )
+      .addToggle(toggle => {
+        toggle.setValue(settings.useYOLO).onChange(async v => {
+          settings.useYOLO = v
+          await saveSettings(this.plugin)
+          this.display() // Refresh to show/hide YOLO settings
+        })
+      })
+
+    if (settings.useYOLO) {
+      new Setting(containerEl)
+        .setName('Model URL (optional)')
+        .setDesc(
+          'URL to a YOLO ONNX model. Leave empty to use the default YOLOv8n model.'
+        )
+        .addText(text => {
+          text
+            .setPlaceholder('https://...')
+            .setValue(settings.yoloModelUrl)
+            .onChange(async v => {
+              settings.yoloModelUrl = v
+              await saveSettings(this.plugin)
+            })
+        })
+
+      new Setting(containerEl)
+        .setName('Confidence Threshold')
+        .setDesc('Minimum confidence score for object detection (0.0 - 1.0)')
+        .addSlider(slider => {
+          slider
+            .setLimits(0, 1, 0.05)
+            .setValue(settings.yoloConfidenceThreshold)
+            .setDynamicTooltip()
+            .onChange(async v => {
+              settings.yoloConfidenceThreshold = v
+              await saveSettings(this.plugin)
+            })
+        })
+
+      if (settings.useVLM) {
+        new Setting(containerEl)
+          .setName('Combine YOLO with VLM')
+          .setDesc(
+            'Use YOLO to detect objects, then send the object list to VLM for a richer description.'
+          )
+          .addToggle(toggle => {
+            toggle.setValue(settings.yoloCombineWithVLM).onChange(async v => {
+              settings.yoloCombineWithVLM = v
+              await saveSettings(this.plugin)
+            })
+          })
+      }
+    }
+    //#endregion YOLO Settings
 
     // Language selector
 
@@ -108,6 +278,18 @@ const DEFAULT_SETTINGS: TextExtractorSettings = {
   ocrLanguages: ['eng'],
   rightClickMenu: true,
   useSystemOCR: false,
+  // VLM settings
+  useVLM: false,
+  vlmProvider: 'openai',
+  vlmApiKey: '',
+  vlmModel: '',
+  vlmPrompt: '',
+  vlmMaxTokens: 1000,
+  // YOLO settings
+  useYOLO: false,
+  yoloModelUrl: '',
+  yoloConfidenceThreshold: 0.5,
+  yoloCombineWithVLM: false,
 }
 
 export const selectedLanguages = writable(DEFAULT_SETTINGS.ocrLanguages)

@@ -49,9 +49,10 @@
   "dependencies": {
     "@apollo/utils.createhash": "^3.0.0",
     "mammoth": "^1.6.0",
+    "onnxruntime-web": "^1.20.1",
     "p-queue": "^7.4.1",
     "pure-md5": "^0.1.14",
     "tesseract.js": "^3.0.3",
-    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.1/xlsx-0.20.1.tgz"
+    "xlsx": "^0.18.5"
   }
 }

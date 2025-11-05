@@ -26,12 +26,32 @@ Supported files:
 - PDFs (`.pdf`)
 - Office documents (`.docx`, `.xlsx`)
 
+### 🆕 NEW: Advanced Extraction Methods
+
+In addition to traditional OCR, the plugin now supports:
+
+- **🤖 Vision Language Models (VLM)** - Use OpenAI GPT-4 Vision, Anthropic Claude, or Google Gemini for superior text extraction and image understanding (requires API key)
+- **👁️ YOLO Object Detection** - Detect and describe objects in images using local browser-based inference (no API required)
+- **🔄 Combined YOLO + VLM** - Detect objects with YOLO, then enhance with VLM descriptions
+
+See [VLM_YOLO_INTEGRATION.md](./VLM_YOLO_INTEGRATION.md) for detailed documentation.
+
+### Extraction Methods
+
+The plugin supports multiple extraction methods with the following priority:
+1. **YOLO Object Detection** (local, browser-based)
+2. **Vision Language Models** (API-based: OpenAI, Anthropic, Google)
+3. **System OCR** (macOS only, native Vision framework)
+4. **Tesseract.js** (default, local OCR)
+
 ### Limitations
 
-- The plugin currently uses [Tesseract.js](https://tesseract.projectnaptha.com/) and [pdf-extract](https://github.com/jrmuizel/pdf-extract) to extract texts from images and PDFs. Those libraries are not perfect, and may not work on some files.
+- The default method uses [Tesseract.js](https://tesseract.projectnaptha.com/) and [pdf-extract](https://github.com/jrmuizel/pdf-extract) to extract texts from images and PDFs. Those libraries are not perfect, and may not work on some files.
 - **🟥 PDF files often fail to get their text extracted 🟥**. See [#7](https://github.com/scambier/obsidian-text-extractor/issues/7) and [#21](https://github.com/scambier/obsidian-text-extractor/discussions/21)
 - **🟥 Text Extraction does not work on mobile 🟥**. Read the following section for more details.
-- Text Extractor needs an Internet connection to work. All the processing is done locally, but the language files needed by the underlying OCR library (Tesseract) are downloaded on demand.
+- Traditional OCR (Tesseract) needs an Internet connection to work. All the processing is done locally, but the language files are downloaded on demand.
+- VLM extraction requires an API key and internet connection
+- YOLO only requires internet for the initial model download (~6MB)
 
 ### Cache & Sync
 
