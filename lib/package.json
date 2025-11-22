@@ -10,8 +10,8 @@
   "main": "dist/index.js",
   "types": "dist/src/index.d.ts",
   "scripts": {
-    "dev": "wasm-pack build --target web && rollup -c -w",
-    "build": "wasm-pack build --target web && rollup -c",
+    "dev": "rollup -c -w",
+    "build": "rollup -c",
     "test": "vitest",
     "coverage": "vitest run --coverage",
     "prepublishOnly": "pnpm run build"
