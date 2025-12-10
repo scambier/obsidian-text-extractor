@@ -1,15 +1,20 @@
 use js_sys::Uint8Array;
-use pdf_extract::extract_text_from_mem;
+use pdf_extract::extract_text_from_mem_by_pages;
 use wasm_bindgen::prelude::*;
 
 // mod obsidian;
 
 #[wasm_bindgen]
-pub fn extract_pdf_text(arr: Uint8Array) -> Result<String, JsError> {
-    match extract_text_from_mem(&arr.to_vec()) {
-        Ok(txt) => return Ok(txt),
-        Err(e) => return Err(JsError::new(&e.to_string())),
-    };
+pub fn extract_pdf_text_by_pages(arr: Uint8Array) -> Result<js_sys::Array, JsError> {
+    let pages = extract_text_from_mem_by_pages(&arr.to_vec())
+        .map_err(|e| JsError::new(&e.to_string()))?;
+
+    let result = js_sys::Array::new();
+    for content in pages {
+        result.push(&JsValue::from_str(&content));
+    }
+
+    Ok(result)
 }
 
 // #[wasm_bindgen]

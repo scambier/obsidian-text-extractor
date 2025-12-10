@@ -30,7 +30,11 @@ class PDFWorker {
     PDFWorker.#pool = PDFWorker.#pool.filter(w => w !== pdfWorker)
   }
 
-  public async run(msg: { data: Uint8Array; name: string }): Promise<any> {
+  public async run(msg: {
+    data: Uint8Array
+    name: string
+    normalize: boolean
+  }): Promise<any> {
     return new Promise((resolve, reject) => {
       this.#running = true
 
@@ -53,7 +57,7 @@ class PDFWorker {
 class PDFManager {
   public async getPdfText(file: TFile): Promise<string> {
     try {
-      return await pdfProcessQueue.add(() => this.#getPdfText(file)) ?? ''
+      return (await pdfProcessQueue.add(() => this.#getPdfText(file))) ?? ''
     } catch (e) {
       console.warn(
         `Text Extractor - Error while extracting text from ${file.basename}`
@@ -81,21 +85,32 @@ class PDFManager {
 
     return new Promise(async (resolve, reject) => {
       try {
-        const res = await worker.run({ data, name: file.basename })
-        const text = (res.data.text as string)
-          // Replace \n with spaces
-          .replace(/\n/g, ' ')
-          // Trim multiple spaces
-          .replace(/ +/g, ' ')
-          .trim()
+        const res = await worker.run({
+          data,
+          name: file.basename,
+          normalize: true,
+        })
+        const text = res.data.text as string
 
         // Add it to the cache
-        await writeCache(cachePath.folder, cachePath.filename, text, file.path, '')
+        await writeCache(
+          cachePath.folder,
+          cachePath.filename,
+          text,
+          file.path,
+          ''
+        )
         resolve(text)
       } catch (e) {
         // In case of error (unreadable PDF or timeout) just add
         // an empty string to the cache
-        await writeCache(cachePath.folder, cachePath.filename, '', file.path, '')
+        await writeCache(
+          cachePath.folder,
+          cachePath.filename,
+          '',
+          file.path,
+          ''
+        )
         resolve('')
       }
     })
