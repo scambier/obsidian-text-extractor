@@ -41,9 +41,7 @@ onmessage = async evt => {
 
     self.postMessage({ text })
   } catch (e) {
-    console.info(
-      'Text Extractor - Could not extract text from ' + evt.data.name
-    )
+    console.info('Text Extractor - Could not extract text from ' + evt.data.name)
     self.postMessage({ text: '' })
   }
 }

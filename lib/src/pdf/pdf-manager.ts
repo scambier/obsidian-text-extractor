@@ -57,7 +57,7 @@ class PDFWorker {
 class PDFManager {
   public async getPdfText(file: TFile): Promise<string> {
     try {
-      return (await pdfProcessQueue.add(() => this.#getPdfText(file))) ?? ''
+      return await pdfProcessQueue.add(() => this.#getPdfText(file)) ?? ''
     } catch (e) {
       console.warn(
         `Text Extractor - Error while extracting text from ${file.basename}`
@@ -93,24 +93,12 @@ class PDFManager {
         const text = res.data.text as string
 
         // Add it to the cache
-        await writeCache(
-          cachePath.folder,
-          cachePath.filename,
-          text,
-          file.path,
-          ''
-        )
+        await writeCache(cachePath.folder, cachePath.filename, text, file.path, '')
         resolve(text)
       } catch (e) {
         // In case of error (unreadable PDF or timeout) just add
         // an empty string to the cache
-        await writeCache(
-          cachePath.folder,
-          cachePath.filename,
-          '',
-          file.path,
-          ''
-        )
+        await writeCache(cachePath.folder, cachePath.filename, '', file.path, '')
         resolve('')
       }
     })
