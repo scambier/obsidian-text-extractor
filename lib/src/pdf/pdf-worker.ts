@@ -11,14 +11,14 @@ function normalize(text: string) {
 /**
  * Extract text from the PDF by calling into WASM plugin
  * @param pdf pdf buffer
- * @param shouldNormalise true to normalise all spaces/newlines to a single space
+ * @param shouldNormalize true to normalize all spaces/newlines to a single space
  */
-function extract(pdf: Uint8Array, shouldNormalise: boolean) {
+function extract(pdf: Uint8Array, shouldNormalize: boolean) {
   // Extract text by page
   let text = plugin.extract_pdf_text_by_pages(pdf)
 
   // If requested, normalize text
-  if (shouldNormalise) {
+  if (shouldNormalize) {
     text = text.map(normalize)
   }
 
@@ -34,10 +34,10 @@ onmessage = async evt => {
 
   try {
     const pdf = evt.data.data as Uint8Array
-    const shouldNormalise: boolean = !!evt.data.normalize
+    const shouldNormalize: boolean = !!evt.data.normalize
 
     // Perform text extraction
-    const text = extract(pdf, shouldNormalise)
+    const text = extract(pdf, shouldNormalize)
 
     self.postMessage({ text })
   } catch (e) {
