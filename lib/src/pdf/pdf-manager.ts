@@ -30,7 +30,11 @@ class PDFWorker {
     PDFWorker.#pool = PDFWorker.#pool.filter(w => w !== pdfWorker)
   }
 
-  public async run(msg: { data: Uint8Array; name: string }): Promise<any> {
+  public async run(msg: {
+    data: Uint8Array
+    name: string
+    normalize: boolean
+  }): Promise<any> {
     return new Promise((resolve, reject) => {
       this.#running = true
 
@@ -81,13 +85,12 @@ class PDFManager {
 
     return new Promise(async (resolve, reject) => {
       try {
-        const res = await worker.run({ data, name: file.basename })
-        const text = (res.data.text as string)
-          // Replace \n with spaces
-          .replace(/\n/g, ' ')
-          // Trim multiple spaces
-          .replace(/ +/g, ' ')
-          .trim()
+        const res = await worker.run({
+          data,
+          name: file.basename,
+          normalize: true,
+        })
+        const text = res.data.text as string
 
         // Add it to the cache
         await writeCache(cachePath.folder, cachePath.filename, text, file.path, '')
