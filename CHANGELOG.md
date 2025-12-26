@@ -1,3 +1,7 @@
+## 0.7.0
+
+- Return the page for PDF results
+
 ## 0.6.0
 
 - Added support for MacOs OCR, by @ajihyf
