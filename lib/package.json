@@ -10,8 +10,8 @@
   "main": "dist/index.js",
   "types": "dist/src/index.d.ts",
   "scripts": {
-    "dev": "wasm-pack build --target web && rollup -c -w",
-    "build": "wasm-pack build --target web && rollup -c",
+    "dev": "rollup -c -w",
+    "build": "rollup -c",
     "test": "vitest",
     "coverage": "vitest run --coverage",
     "prepublishOnly": "pnpm run build"
@@ -24,6 +24,7 @@
     "@rollup/plugin-json": "^5.0.2",
     "@rollup/plugin-node-resolve": "^13.3.0",
     "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "8.5.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@tsconfig/svelte": "^3.0.0",
     "@types/jest": "^27.5.2",
