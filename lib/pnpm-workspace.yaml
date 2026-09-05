@@ -1,6 +1,5 @@
-onlyBuiltDependencies:
-  - esbuild
-  - tesseract.js
+allowBuilds:
+  tesseract.js: false
 
 overrides:
   esbuild@<=0.24.2: '>=0.25.0'

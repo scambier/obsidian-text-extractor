@@ -1,5 +1,4 @@
 import { Platform, TFile } from 'obsidian'
-import WebWorker from 'web-worker:./pdf-worker.ts'
 import {
   CANT_EXTRACT_ON_MOBILE,
   FAILED_TO_EXTRACT,
@@ -8,50 +7,65 @@ import {
 } from '../globals'
 import { getCachePath, readCache, writeCache } from '../cache'
 
-class PDFWorker {
-  static #pool: PDFWorker[] = []
-  #running = false
+function extractWithPdftotext(filePath: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const { spawn }: typeof import('child_process') = require('child_process')
+    const child = spawn('pdftotext', ['-layout', filePath, '-'])
+    const stdout: Buffer[] = []
+    const stderr: Buffer[] = []
+    let finished = false
 
-  private constructor(private worker: Worker) {}
+    const timer = setTimeout(() => {
+      if (finished) return
+      finished = true
+      child.kill('SIGKILL')
+      reject(new Error(`pdftotext timed out after ${workerTimeout} ms`))
+    }, workerTimeout)
 
-  static getWorker(): PDFWorker {
-    const free = PDFWorker.#pool.find(w => !w.#running)
-    if (free) {
-      return free
-    }
-    // Spawn a new worker
-    const worker = new PDFWorker(new WebWorker({ name: 'PDF Text Extractor' }))
-    PDFWorker.#pool.push(worker)
-    return worker
-  }
+    child.stdout.on('data', (data: Buffer) => stdout.push(data))
+    child.stderr.on('data', (data: Buffer) => stderr.push(data))
 
-  static #destroyWorker(pdfWorker: PDFWorker) {
-    pdfWorker.worker.terminate()
-    PDFWorker.#pool = PDFWorker.#pool.filter(w => w !== pdfWorker)
-  }
-
-  public async run(msg: {
-    data: Uint8Array
-    name: string
-    normalize: boolean
-  }): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.#running = true
-
-      const timeout = setTimeout(() => {
-        console.warn('Text Extractor - PDF Worker timeout for ', msg.name)
-        reject('timeout')
-        PDFWorker.#destroyWorker(this)
-      }, workerTimeout)
-
-      this.worker.postMessage(msg)
-      this.worker.onmessage = evt => {
-        clearTimeout(timeout)
-        resolve(evt)
-        this.#running = false
-      }
+    child.on('error', (error: Error) => {
+      if (finished) return
+      finished = true
+      clearTimeout(timer)
+      reject(error)
     })
+
+    child.on('close', (code: number | null) => {
+      if (finished) return
+      finished = true
+      clearTimeout(timer)
+
+      if (code !== 0) {
+        const error = Buffer.concat(stderr).toString('utf8').trim()
+        reject(
+          new Error(
+            `pdftotext exited with code ${code}${error ? `: ${error}` : ''}`
+          )
+        )
+        return
+      }
+
+      resolve(Buffer.concat(stdout).toString('utf8'))
+    })
+  })
+}
+
+function normalize(text: string): string {
+  return text.replace(/[ \n]+/g, ' ').trim()
+}
+
+function formatPdfText(text: string): string {
+  const pages = text.split('\f')
+
+  if (pages.length > 0 && pages[pages.length - 1].trim() === '') {
+    pages.pop()
   }
+
+  return pages
+    .map((page, i) => `# Page ${i + 1}^page=${i + 1}\n${normalize(page)}\n\n`)
+    .join('')
 }
 
 class PDFManager {
@@ -68,8 +82,8 @@ class PDFManager {
   }
 
   async #getPdfText(file: TFile): Promise<string> {
-    // Get the text from the cache if it exists
     const cache = await readCache(file)
+
     if (cache) {
       return cache.text ?? FAILED_TO_EXTRACT
     }
@@ -78,30 +92,38 @@ class PDFManager {
       return CANT_EXTRACT_ON_MOBILE
     }
 
-    // The PDF is not cached, extract it
     const cachePath = getCachePath(file)
-    const data = new Uint8Array(await app.vault.readBinary(file))
-    const worker = PDFWorker.getWorker()
 
-    return new Promise(async (resolve, reject) => {
-      try {
-        const res = await worker.run({
-          data,
-          name: file.basename,
-          normalize: true,
-        })
-        const text = res.data.text as string
+    try {
+      const fullPath = (app.vault.adapter as any).getFullPath(file.path)
+const text = await extractWithPdftotext(fullPath)
+      const formattedText = formatPdfText(text)
 
-        // Add it to the cache
-        await writeCache(cachePath.folder, cachePath.filename, text, file.path, '')
-        resolve(text)
-      } catch (e) {
-        // In case of error (unreadable PDF or timeout) just add
-        // an empty string to the cache
-        await writeCache(cachePath.folder, cachePath.filename, '', file.path, '')
-        resolve('')
-      }
-    })
+      await writeCache(
+        cachePath.folder,
+        cachePath.filename,
+        formattedText,
+        file.path,
+        ''
+      )
+
+      return formattedText
+    } catch (e) {
+      console.warn(
+        `Text Extractor - Could not extract text from ${file.basename} using pdftotext`
+      )
+      console.warn(e)
+
+      await writeCache(
+        cachePath.folder,
+        cachePath.filename,
+        '',
+        file.path,
+        ''
+      )
+
+      return ''
+    }
   }
 }
 
